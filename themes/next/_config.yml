@@ -163,22 +163,24 @@ sidebar:
 # Sidebar Avatar
 avatar:
   # Replace the default image and set the url here.
-  url: /uploads/avatar.jpg
+  url: /images/avatar.jpg
   # If true, the avatar will be dispalyed in circle.
   rounded: true
   # If true, the avatar will be rotated with the cursor.
   rotated: false
 
 # Posts / Categories / Tags in sidebar.
-site_state: true
+site_state: false
 
 # Social Links
 # Usage: `Key: permalink || icon`
 # Key is the link label showing to end users.
 # Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
-  #GitHub: https://github.com/yourname || fab fa-github
-  #E-Mail: mailto:yourname@gmail.com || fa fa-envelope
+  GitHub: https://github.com/Unparalleled-Calvin || fab fa-github
+  邮件: mailto:CalvinCui@foxmail.com || fa fa-envelope
+  哔哩哔哩: https://space.bilibili.com/438414714 || iconfont icon-bilibili-line
+  公众号: /WeChatPublicAccount/ || iconfont icon-gongzhonghao
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
   #Twitter: https://twitter.com/yourname || fab fa-twitter
