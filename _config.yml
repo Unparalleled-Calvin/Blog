@@ -106,3 +106,9 @@ deploy:
   repo: git@github.com:Unparalleled-Calvin/Blog.git
   branch: page
 
+# Search
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
