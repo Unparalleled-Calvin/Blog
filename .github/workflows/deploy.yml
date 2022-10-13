@@ -21,19 +21,17 @@ jobs:
         node_version: [16.x]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Restore file modification time
-        run: |
-          find source/_posts -name '*.md' | while read file; do touch -d "$(git log -1 --pretty="@%ct" -- $file)" $file; done
-
       - name: Checkout deploy repo
         uses: actions/checkout@v2
         with:
           repository: ${{ env.DEPLOY_REPO }}
           ref: ${{ env.DEPLOY_BRANCH }}
           path: .deploy_git
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0' # deep copy git history
 
       - name: Use Node.js ${{ matrix.node_version }}
         uses: actions/setup-node@v1
@@ -55,6 +53,11 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
+
+      - name: Restore file modification time
+        run: |
+          git config --global core.quotepath false
+          git ls-files --directory source | while read path; do touch -d "$(git log -1 --format='@%ct' $path)" "$path"; done
 
       - name: Deploy hexo
         run: |
