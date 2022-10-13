@@ -178,9 +178,9 @@ site_state: false
 # Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
   GitHub: https://github.com/Unparalleled-Calvin || fab fa-github
-  邮件: mailto:CalvinCui@foxmail.com || fa fa-envelope
-  哔哩哔哩: https://space.bilibili.com/438414714 || iconfont icon-bilibili-line
-  公众号: /WeChatPublicAccount/ || iconfont icon-gongzhonghao
+  E-mail: mailto:CalvinCui@foxmail.com || fa fa-envelope
+  BiliBili: https://space.bilibili.com/438414714 || iconfont icon-bilibili-line
+  Platform: /WeChatOfficialAccount/ || iconfont icon-gongzhonghao
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
   #Twitter: https://twitter.com/yourname || fab fa-twitter
@@ -410,10 +410,10 @@ github_banner:
 # ---------------------------------------------------------------
 
 font:
-  enable: false
+  enable: true
 
   # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
-  host:
+  host: https://fonts.loli.net
 
   # Font options:
   # `external: true` will load this font family from `host` above.
@@ -423,7 +423,7 @@ font:
   # Global font settings used for all elements inside <body>.
   global:
     external: true
-    family: Lato
+    family: Noto Serif SC
     size:
 
   # Font settings for site title (.site-title).
@@ -617,11 +617,11 @@ valine:
   appkey: o89uMayD73xafvaVZ3GddaZF # Your leancloud application appkey
   notify: false # Mail notifier
   verify: false # Verification code
-  placeholder: 请畅所欲言吧~ # Comment box placeholder
+  placeholder: Feel free to comment here~ # Comment box placeholder
   avatar: mm # Gravatar style
   guest_info: nick,mail,link # Custom comment header
   pageSize: 10 # Pagination size
-  language: # Language, available values: en, zh-cn
+  language: en # Language, available values: en, zh-cn
   visitor: false # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
   recordIP: false # Whether to record the commenter IP
