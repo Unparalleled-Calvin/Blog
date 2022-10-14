@@ -202,7 +202,7 @@ toc:
 # ---------------------------------------------------------------
 
 # Show multilingual switcher in footer.
-language_switcher: true
+language_switcher: false
 
 footer:
   # Specify the year when the site was setup. If not defined, current year will be used.
@@ -909,3 +909,19 @@ vendors:
 css: css
 js: js
 images: images
+
+# Waline
+# For more information: https://waline.js.org, https://github.com/walinejs/waline
+waline:
+  enable: true
+  serverURL: https://3rtju6.deta.dev/
+  locale:
+    placeholder: Feel free to comment here...
+  avatar: mm
+  meta: [nick, mail, link]
+  pageSize: 10
+  lang: en
+  visitor: false
+  comment_count: true
+  requiredFields: []
+  libUrl:
