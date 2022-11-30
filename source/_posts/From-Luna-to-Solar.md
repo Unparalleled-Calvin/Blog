@@ -22,7 +22,7 @@ SOLAR：在LUNA的经验上，使用**UDP协议栈**实现网络化存储，同�
 
 ### Background
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7gai54rtwj30x10q2qgt.jpg" alt="image.png" style="zoom:50%;" />
+<img src="From-Luna-to-Solar/006g42Mjly1h7gai54rtwj30x10q2qgt.jpg" alt="image.png" style="zoom:50%;" />
 
 传统EBS网络构造如上图所示，存储服务器和计算服务器的区分使得总体性能高于全部使用通用服务器，另外存储服务器本身也能够被精细化设计从而保证数据安全和效率。本文主要关注Frontend Network(串联同一地区各个集群的前端网络)【Backend Network通常是PoD(point of deliverly)的结构】
 
@@ -31,7 +31,7 @@ Storage Agent(SA)主要维护两个表单：
 - Segment Table：虚拟磁盘到物理磁盘数据段的映射
 - QoS(quality of service) Table：维护各个虚拟磁盘服务等级和当前使用情况(带宽，IOPS每秒读写次数等)
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7gbqldq72j30ym0l7ngu.jpg" alt="image.png" style="zoom: 67%;" />
+<img src="From-Luna-to-Solar/006g42Mjly1h7gbqldq72j30ym0l7ngu.jpg" alt="image.png" style="zoom: 67%;" />
 
 > 为什么中间要加一个Block/Chunk Server而不是用一些协议进行RDMA(Remote Direct Memory Access)？
 >
@@ -39,7 +39,7 @@ Storage Agent(SA)主要维护两个表单：
 > - 多个VM操作多个VD带来的一致性问题
 > - 灵活性、粒度……
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7hec5ne76j30sc0j311t.jpg" alt="image.png" style="zoom:50%;" />
+<img src="From-Luna-to-Solar/006g42Mjly1h7hec5ne76j30sc0j311t.jpg" alt="image.png" style="zoom:50%;" />
 
 图中是I/O延迟的对比图，可以看到，在使用SSD时，Kernel TCP造成的延迟逐渐成为性能瓶颈(原来用的HDD可能速度更慢)，FN/BN/SA都需要去匹配SSD的高速。
 
@@ -51,15 +51,15 @@ FN往往连接成百上千的计算节点，同时各个节点的设计往往不
 
 2019年开始LUNA被部署到几乎所有阿里云平台
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7hk4ofb4qj30o90eoq8u.jpg" alt="image.png" style="zoom: 67%;" />
+<img src="From-Luna-to-Solar/006g42Mjly1h7hk4ofb4qj30o90eoq8u.jpg" alt="image.png" style="zoom: 67%;" />
 
 LUNA的亮点：
 
 > [NSDI'14 mTCP: a Highly Scalable User-level TCP Stack for Multicore Systems](https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-jeong.pdf)，提供Run-to-Complete实现网络传输的零拷贝
 >
-> <img src="https://pic3.zhimg.com/80/v2-1fd0111829fd904e04ddbf06b121d7b6_1440w.webp" style="zoom: 80%;" />
+> <img src="From-Luna-to-Solar/v2-1fd0111829fd904e04ddbf06b121d7b6_1440w.webp" style="zoom: 80%;" />
 >
-> <img src="https://pic3.zhimg.com/80/v2-2bc95f9f013e34e0c02c80832a006a72_1440w.webp" style="zoom:80%;" />
+> <img src="From-Luna-to-Solar/v2-2bc95f9f013e34e0c02c80832a006a72_1440w.webp" style="zoom:80%;" />
 >
 > - 读取NIC(网络接口控制器)的数据包由事件驱动而不是轮询，批处理读取
 > - TCP放到用户态，减少系统调用
@@ -82,11 +82,11 @@ bare-metal：将整机提供给客户(可以自行建立多个虚拟机)，而�
 
 bare-metal cloud：将云基础设施移交到硬件
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjgy1h7k3cdgmowj30yq0ed7cf.jpg" alt="image.png" style="zoom:67%;" />
+<img src="From-Luna-to-Solar/006g42Mjgy1h7k3cdgmowj30yq0ed7cf.jpg" alt="image.png" style="zoom:67%;" />
 
 可以看到，DPU(Data Processing Unit)提供CPU(6核以限制能耗)、内存、虚拟化、可编程部件(FPGA/ASIC)以及通过PCIe(外围组件互连快件)进行直接内存访问
 
-![image.png](http://tva1.sinaimg.cn/large/006g42Mjgy1h7k3mzdf9ij310p08qgsj.jpg)
+![image.png](From-Luna-to-Solar/006g42Mjgy1h7k3mzdf9ij310p08qgsj.jpg)
 
 LUNA的网络栈和SA都在CPU里，CPU的开销很大。即便使用RDMA将数据访问offload到硬件，SA依然占用了CPU。另外，LUNA还需要经过两次PCIe接口，因此也会被PCIe拖慢一部分性能
 
@@ -102,7 +102,7 @@ one-block-one-packet
 - 更少的状态
 - 很容易实现
 
-<img src="http://tva1.sinaimg.cn/large/006g42Mjgy1h7k60hjlgkj30qo0o6k4f.jpg" alt="image.png" style="zoom:67%;" />
+<img src="From-Luna-to-Solar/006g42Mjgy1h7k60hjlgkj30qo0o6k4f.jpg" alt="image.png" style="zoom:67%;" />
 
 - 写操作过程：QoS获取服务信息，Block获取物理地址，CPU轮询以发起RPC请求，将UDP、RPC报文头生成好。同时与数据合并发出网络包。【CPU在生成RPC头的同时也准备好拥塞反馈的环境等】
 - 读操作过程：与写操作不一样的地方在于，RPC读请求由cpu发出，同时维护一个接受表，等待FGPA处理之后的响应。
