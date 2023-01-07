@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>2022-10-15组会</title>
+    <url>/Blog/2022/10/15/2022-10-15%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h3 id="CLARE-A-Semi-supervised-Community-Detection-Algorithm"><a href="#CLARE-A-Semi-supervised-Community-Detection-Algorithm" class="headerlink" title="CLARE: A Semi-supervised Community Detection Algorithm"></a>CLARE: A Semi-supervised Community Detection Algorithm</h3><p>KDD2022 <a href="https://www.microsoft.com/en-us/research/uploads/prod/2022/08/KDD_CLARE-1.pdf">PDF</a></p>
+<p>社群检测算法无法检测出某种特定的社群</p>
+<p>现有的方法可以归纳为seed based methods，在选定的seed旁边发展community</p>
+<p>SEAL通过序列化决策，效率较低</p>
+<p>核心思想</p>
+<ul>
+<li>精确定位器Locator</li>
+<li>子图生成器Rewritor</li>
+<li>进一步优化Optimization</li>
+</ul>
+<p>locator从潜在社群找出最好的匹配，找出的社群也带有周边结点的信息以帮助进一步操作【借鉴subgraph】</p>
+<p>将社群embedding，然后用nearest neighbor</p>
+<p>然后是rewrite阶段，从选出的候选中，drop掉无关的点以及boundary中的东西，Exclude Net&#x2F;Expand Net，增减图信息</p>
+<p>Task</p>
+<ul>
+<li>Action：从exclude集以及expand集中选择动作</li>
+<li>Reward：以分类的F1 score的形式体现</li>
+</ul>
+<p>Optimization：Policy Gradient</p>
+<p>How does the rewriting implemented in the neural network? </p>
+<p>rewriter是预训练的，训练完之后把东西喂进去</p>
+<h3 id="Multiscale-mixing-patterns-in-networks"><a href="#Multiscale-mixing-patterns-in-networks" class="headerlink" title="Multiscale mixing patterns in networks"></a>Multiscale mixing patterns in networks</h3><p>PNAS2018 <a href="https://arxiv.org/pdf/1708.01236">pdf</a></p>
+<p>异构图上的link</p>
+<p>可以用assortativity coefficient来计算</p>
+<p>感觉这篇文章就是提出了local assortivity的计算，还有用assortivity来做了一些network上的分析</p>
+]]></content>
+      <categories>
+        <category>组会记录</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>KDD</tag>
+        <tag>Community</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker网络虚拟化</title>
+    <url>/Blog/2023/01/07/Docker%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
+    <content><![CDATA[<h3 id="Docker网络虚拟化"><a href="#Docker网络虚拟化" class="headerlink" title="Docker网络虚拟化"></a>Docker网络虚拟化</h3><p>参考资料：</p>
+<ul>
+<li><a href="https://www.dasblinkenlichten.com/an-introduction-to-network-namespaces/">An introduction to network namespaces</a></li>
+<li><a href="https://blog.csdn.net/Kangyucheng/article/details/88051969">五分钟理解VRF</a></li>
+<li>Cloud Native Data Center Networking, Chapter 7: Container Networking</li>
+</ul>
+<h4 id="VRF-Virtual-Route-Forwarding"><a href="#VRF-Virtual-Route-Forwarding" class="headerlink" title="VRF(Virtual Route Forwarding)"></a>VRF(Virtual Route Forwarding)</h4><p>在一个路由器中构建多份虚拟的路由表，从而实现路由&#x2F;转发虚拟化。</p>
+<p>所谓的虚拟路由表，可以理解为将一组接口-&gt;接口的转发策略打包到一起，当请求到来时，自然可以通过映射找到要去的接口。</p>
+<p>这样做可以实现目的地相同但下一条不同的两个转发策略同时存在于一个路由器中。</p>
+<img src="image_thumb3.png" alt="image" style="zoom: 67%;" />
+
+<p>例如该图中192.168.1.1和192.168.1.1同属于192.168.1.0&#x2F;24，此时路由器处理来自两个不同接口的请求时(分别路由到数据接口和管理接口)，如果没有VRF，回去的包必定走同一个接口，会造成<strong>不对称路由问题</strong>(来去的链路不一样)。使用VRF后，可以让来自下方云接口的请求去下方云，来自右边云接口的请求回右边云。</p>
+<p>一个具体的路由表例子：</p>
+<img src="20190301111226761.gif" alt="img" style="zoom: 67%;" />
+
+<p>同时，为了一定程度上实现资源共享，VRF之间实现部分“互通”也是有必要的，即设立一个转发路径让数据包被转发至另一个VRF所辖的接口，这被称为<strong>route leaking</strong></p>
+<h4 id="Linux-Network-Namespace"><a href="#Linux-Network-Namespace" class="headerlink" title="Linux Network Namespace"></a>Linux Network Namespace</h4><blockquote>
+<p>Network namespace允许你在Linux中创建相互隔离的网络视图，每个网络名字空间都有自己独立的网络配置，包括：网络设备、路由表、IPTables规则，路由表、网络协议栈等。新建的网络名字空间与主机默认网络名字空间之间是隔离的。我们平时默认操作的是主机的默认网络名字空间。</p>
+</blockquote>
+<p>VRF常见的部署场景是为两个接口(<strong>数据接口</strong>和<strong>管理接口</strong>)分别配置一套路由表。因此对于一台服务器来说，也可以通过namespace来做到与VRF相同的事情：只需要将不同的接口【网卡】添加到不同的namespace下就可以了。由此，来自相同ip段的请求发送到不同的接口上就可以用不同的链路响应，而不是用非对称的方式(用唯一接口对应一个ip段)解决。</p>
+<p>另外，对于VRF语境下”route leaking”的需要，Linux提供了<code>veth</code>这样一种虚拟设备来连通不同的namespace。<code>veth</code>在构建时可以理解为一个类似Linux管道的设备，在一个接口处写，另一个接口就能读出相应的数据，格式一般为<code>a@b</code>，因此可以从本namespace中把数据递到其他namespace中。</p>
+<h4 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h4><p>veth可以解决让两个namespace通信的问题，而bridge则可以让多个namespace之间进行通信。例如构建n个veth，然后将n个出发接口加入对应namespace，将n个目的接口都加入bridge。那么就实现了多个namespace的互通。</p>
+<h4 id="Single-host下Docker的Linux实践"><a href="#Single-host下Docker的Linux实践" class="headerlink" title="Single-host下Docker的Linux实践"></a>Single-host下Docker的Linux实践</h4><p>Docker容器使用了LinuxNetwork Namepsace，并在宿主机上创建了docker0的bridge。在未指定网络配置时，通过docker run启动的容器都会有一个veth连到docker0。因此默认情况下，各个容器是互通的。</p>
+<blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -idt --name=busybox busybox #后台启动一个busybox的容器</span><br><span class="line">nsenter -t `docker inspect --format &#x27;&#123;&#123;.State.Pid&#125;&#125;&#x27; busybox` -n ip -d link show #进入该容器namespace并查看链路层相关接口</span><br></pre></td></tr></table></figure>
+
+<img src="/Blog/2023/01/07/Docker%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96/image-20230107171508344.png" class="" title="image-20230107171508344">
+
+<p>可以看到此时容器中除了有loopback接口之外，还有一个ifindex(interface index)为13的<code>veth</code>设备接口，该设备从eth0指向if14。这里eth0是namespace中为了虚拟化而起的别名。</p>
+<p>回到主namespace，执行<code>ip -d link show</code></p>
+<img src="/Blog/2023/01/07/Docker%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96/image-20230107172025305.png" class="" title="image-20230107172025305">
+
+<p>可以看到主namespace下if14正是一条前往if13的veth，并且该接口正属于docker0的bridge。</p>
+</blockquote>
+<p>Docker会将默认的子网172.17.0.0&#x2F;16应用于docker0，同时对于新产生的容器，在为容器分配该子网下的ip的同时，也为容器加上去docker0的路由。</p>
+<blockquote>
+<p>进入容器后查看ip和路由</p>
+<img src="image-20230107175917501.png" alt="image-20230107175917501" style="zoom:50%;" />
+</blockquote>
+<p>docker0则使用NAT代理所有的内部请求至Docker拥有的与宿主机处于同一网段的single-host的ip，从而实现内外部的通信。</p>
+<p>上述是在single-host上docker使用bridge的一种实现，multihost场景下，有更多的插件可以供选择。对于k8s来说，其网络配置力求做到没有NAT参与，即容器IP在内外看来都是一致的，这部分在本文中不再深入讨论。</p>
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>Network</tag>
+        <tag>Container</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>From Luna to Solar</title>
+    <url>/Blog/2022/10/24/From-Luna-to-Solar/</url>
+    <content><![CDATA[<h3 id="From-Luna-to-Solar-The-Evolutions-of-the-Compute-to-Storage-Networks-in-Alibaba-Cloud"><a href="#From-Luna-to-Solar-The-Evolutions-of-the-Compute-to-Storage-Networks-in-Alibaba-Cloud" class="headerlink" title="From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba Cloud"></a>From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba Cloud</h3><h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>弹性存储系统(EBS, Elastic Block Storage)要求高可用高速度，并且不同的而硬件配置也使得传统网络协议无法很好地适配。</p>
+<p>LUNA：取代内核TCP栈以协调HDD(硬盘)和SSD(固态硬盘)的速度。在计算和存储集群之间的网络使用<strong>用户空间的TCP</strong>而不是硬件来提高scalability和interoperability。最终发现在性能上有很好的提高。</p>
+<p>SOLAR：在LUNA的经验上，使用<strong>UDP协议栈</strong>实现网络化存储，同时辅之以<strong>硬件加速</strong>和<strong>快速错误恢复</strong>。由于网络协议倾向于提供统一的处理方式，而存储硬件的分层结构又带来末端的复杂性，因此SOLAR的主要创新点就在于<strong>打破了网络和存储层的边界，将网络包和存储块糅合在一起</strong>。</p>
+<ul>
+<li>EBS的数据路径被完全转移到网络部分，独立硬件可以处理而无需牵扯CPU和内存</li>
+<li>数据块并不需要网络数据报那样要求到达顺序，因此无需维护接受缓冲等</li>
+<li>轻量级错误检测</li>
+<li>多路错误恢复(并没有建立TCP那样的端到端连接，错误恢复不影响scalability)</li>
+</ul>
+<h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><img src="006g42Mjly1h7gai54rtwj30x10q2qgt.jpg" alt="image.png" style="zoom:50%;" />
+
+<p>传统EBS网络构造如上图所示，存储服务器和计算服务器的区分使得总体性能高于全部使用通用服务器，另外存储服务器本身也能够被精细化设计从而保证数据安全和效率。本文主要关注Frontend Network(串联同一地区各个集群的前端网络)【Backend Network通常是PoD(point of deliverly)的结构】</p>
+<p>Storage Agent(SA)主要维护两个表单：</p>
+<ul>
+<li>Segment Table：虚拟磁盘到物理磁盘数据段的映射</li>
+<li>QoS(quality of service) Table：维护各个虚拟磁盘服务等级和当前使用情况(带宽，IOPS每秒读写次数等)</li>
+</ul>
+<img src="006g42Mjly1h7gbqldq72j30ym0l7ngu.jpg" alt="image.png" style="zoom: 67%;" />
+
+<blockquote>
+<p>为什么中间要加一个Block&#x2F;Chunk Server而不是用一些协议进行RDMA(Remote Direct Memory Access)？</p>
+<ul>
+<li>直接操作磁盘带来的LSM-Tree上的合并等操作与计算专用服务器CPU性能不匹配</li>
+<li>多个VM操作多个VD带来的一致性问题</li>
+<li>灵活性、粒度……</li>
+</ul>
+</blockquote>
+<img src="006g42Mjly1h7hec5ne76j30sc0j311t.jpg" alt="image.png" style="zoom:50%;" />
+
+<p>图中是I&#x2F;O延迟的对比图，可以看到，在使用SSD时，Kernel TCP造成的延迟逐渐成为性能瓶颈(原来用的HDD可能速度更慢)，FN&#x2F;BN&#x2F;SA都需要去匹配SSD的高速。</p>
+<blockquote>
+<p>这里写速度比读速度快很多的原因是SSD有write cache</p>
+</blockquote>
+<h3 id="LUNA"><a href="#LUNA" class="headerlink" title="LUNA"></a>LUNA</h3><p>FN往往连接成百上千的计算节点，同时各个节点的设计往往不太一样，因此对scalability和interoperability有较高的要求。而对BN来说，小集群内硬件的配置大多相同，同时为了控制宕机的影响范围，集群内连接数也不会太多。</p>
+<p>2019年开始LUNA被部署到几乎所有阿里云平台</p>
+<img src="006g42Mjly1h7hk4ofb4qj30o90eoq8u.jpg" alt="image.png" style="zoom: 67%;" />
+
+<p>LUNA的亮点：</p>
+<blockquote>
+<p><a href="https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-jeong.pdf">NSDI’14 mTCP: a Highly Scalable User-level TCP Stack for Multicore Systems</a>，提供Run-to-Complete实现网络传输的零拷贝</p>
+<img src="v2-1fd0111829fd904e04ddbf06b121d7b6_1440w.webp" style="zoom: 80%;" />
+
+<img src="v2-2bc95f9f013e34e0c02c80832a006a72_1440w.webp" style="zoom:80%;" />
+
+<ul>
+<li>读取NIC(网络接口控制器)的数据包由事件驱动而不是轮询，批处理读取</li>
+<li>TCP放到用户态，减少系统调用</li>
+<li>应用线程和mTCP线程共享buffer【是否是RTC……】</li>
+</ul>
+</blockquote>
+<p>架构类似mTCP，有如下两个拓展</p>
+<ul>
+<li>通过回收和缓存共享来实现SA到RPC的零拷贝</li>
+<li>lock-free和sharing nothing的线程部署理念，CPU核之间不存在共享和锁，提高并行度</li>
+</ul>
+<p>使用LUNA以后：</p>
+<ul>
+<li>SA逐渐转变成性能瓶颈</li>
+<li>随着网络带宽的进一步提高，将网络栈交由硬件处理变得更加必要</li>
+<li>错误恢复的时间(通常几秒到几分钟)让人难以接受</li>
+</ul>
+<h3 id="SOLAR"><a href="#SOLAR" class="headerlink" title="SOLAR"></a>SOLAR</h3><p>bare-metal：将整机提供给客户(可以自行建立多个虚拟机)，而非将虚拟机提供给客户</p>
+<p>bare-metal cloud：将云基础设施移交到硬件</p>
+<img src="006g42Mjgy1h7k3cdgmowj30yq0ed7cf.jpg" alt="image.png" style="zoom:67%;" />
+
+<p>可以看到，DPU(Data Processing Unit)提供CPU(6核以限制能耗)、内存、虚拟化、可编程部件(FPGA&#x2F;ASIC)以及通过PCIe(外围组件互连快件)进行直接内存访问</p>
+<img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k3mzdf9ij310p08qgsj.jpg" class="" title="image.png">
+
+<p>LUNA的网络栈和SA都在CPU里，CPU的开销很大。即便使用RDMA将数据访问offload到硬件，SA依然占用了CPU。另外，LUNA还需要经过两次PCIe接口，因此也会被PCIe拖慢一部分性能</p>
+<p>SOLAR的设计理念</p>
+<ul>
+<li>通过将网络栈和SAoffload到硬件上，减少CPU开销，避免PCIe</li>
+<li>能够检测和通过动态更换路径避免网络不可用</li>
+</ul>
+<p>one-block-one-packet</p>
+<ul>
+<li>更小的buffer【不用考虑失序到达了】</li>
+<li>CPU和内存使用大大降低</li>
+<li>更少的状态</li>
+<li>很容易实现</li>
+</ul>
+<img src="006g42Mjgy1h7k60hjlgkj30qo0o6k4f.jpg" alt="image.png" style="zoom:67%;" />
+
+<ul>
+<li>写操作过程：QoS获取服务信息，Block获取物理地址，CPU轮询以发起RPC请求，将UDP、RPC报文头生成好。同时与数据合并发出网络包。【CPU在生成RPC头的同时也准备好拥塞反馈的环境等】</li>
+<li>读操作过程：与写操作不一样的地方在于，RPC读请求由cpu发出，同时维护一个接受表，等待FGPA处理之后的响应。<ul>
+<li>CRC的聚合和检测由cpu完成，(FPGA的比特翻转问题难以保证正确性，因此只为每个小段进行CRC计算)。利用了CRC32的递归特性CRC(A^B)&#x3D;CRC(A)^CRC(B)。</li>
+</ul>
+</li>
+</ul>
+<p>SOLAR的经验</p>
+<ul>
+<li>从PCIe3.0到PCIE4.0花了十年，但是网络速度却从10Gbps涨到了100Gbps，因此在未来跳过PCIe仍将是重要的</li>
+<li>将巨型帧的大小从8k降到4k以缓解拥塞，以及使用per-packet ACK来进行拥塞控制</li>
+<li>将弹性存储系统整合进DPU对于边缘网络等有bare-metal cloud的情况依然能起到一定作用</li>
+</ul>
+]]></content>
+      <categories>
+        <category>论文阅读</category>
+      </categories>
+      <tags>
+        <tag>Network</tag>
+        <tag>SIGCOMM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo GitHub Action CI配置(解决文章修改时间问题)</title>
+    <url>/Blog/2022/10/14/Hexo-GitHub-Action-CI%E9%85%8D%E7%BD%AE(%E8%A7%A3%E5%86%B3%E6%96%87%E7%AB%A0%E4%BF%AE%E6%94%B9%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98)/</url>
+    <content><![CDATA[<p>因为本人懒得每次push完代码再手敲一次部署命令，所以想利用Github Action来实现每次push后自动部署到网页。中文互联网上搜索到的解决方案较老，花了几天时间踩了很多坑之后我这里也是成功配置完毕，因此在这里写篇博客记录一下。</p>
+<p>以下是相关版本号</p>
+<ul>
+<li>hexo：v6.3.0</li>
+<li>next：v7.8.0</li>
+<li>node：v16</li>
+</ul>
+<h3 id="手动部署"><a href="#手动部署" class="headerlink" title="手动部署"></a>手动部署</h3><ul>
+<li><p>安装必要插件</p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hexo配置文件</p>
+  <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="comment"># ssh地址</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="comment"># 配置过Github Page的分支，配置过程请自行查阅</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令行部署</p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="CI自动部署"><a href="#CI自动部署" class="headerlink" title="CI自动部署"></a>CI自动部署</h3><ul>
+<li><p>请参考<a href="https://sanonz.github.io/2020/deploy-a-hexo-blog-from-github-actions/">利用 Github Actions 自动部署 Hexo 博客</a>进行Github的配置以及workflow yaml文件的初步配置，我使用的Hexo+Next版本无需使用主题仓库，因此对应部分我删除了。</p>
+</li>
+<li><p>在yaml中添加&#x2F;修改两个step</p>
+<ul>
+<li><p>checkout是将文件放入当前工作区，默认情况下对git文件做<strong>浅拷贝</strong>(shadow copy)，这里为了保留git log中的时间信息，采用<strong>深拷贝</strong>(deep copy)</p>
+<p><strong>目前网上资料很少有这一步，但是这一步很关键</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">fetch-depth:</span> <span class="string">&#x27;0&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第一条指令是取消git对中文文件的转义，否则linux会将<code>\xxx</code>解读为<code>xxx</code>找不到对应中文文件</p>
+<p>第二条指令从git log中读取文件修改记录，并将sources中文件的修改时间用<code>touch -d</code>进行修复</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restore</span> <span class="string">file</span> <span class="string">modification</span> <span class="string">time</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    git config --global core.quotepath false</span></span><br><span class="line"><span class="string">    git ls-files --directory source | while read path; do touch -d &quot;$(git log -1 --format=&#x27;@%ct&#x27; $path)&quot; &quot;$path&quot;; done</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>Github Action</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux权限系统</title>
+    <url>/Blog/2022/11/24/Linux%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F/</url>
+    <content><![CDATA[<h3 id="用户和组管理"><a href="#用户和组管理" class="headerlink" title="用户和组管理"></a>用户和组管理</h3><p>Linux用户分为以下三类</p>
+<ul>
+<li>超级用户【root】</li>
+<li>系统用户【内建用户，不能用来登录，方便系统进程控制资源】</li>
+<li>普通用户</li>
+</ul>
+<p>Linux用户组分为以下三类</p>
+<ul>
+<li>私有组【建立新帐户时与账户名同名的组】</li>
+<li>标准组【组中可以容纳多个用户】</li>
+<li>系统组【由Linux系统建立】</li>
+</ul>
+<pre class="mermaid">graph LR
+用户和组管理 --> 用户配置文件
+用户和组管理 --> 用户组配置文件
+用户配置文件 --> 用户帐号文件 --> /etc/passwd
+用户配置文件 --> 用户影子文件 --> /etc/shadow
+用户组配置文件 --> 用户组帐号文件 --> /etc/group
+用户组配置文件 --> 用户组影子文件 --> /etc/gshadow</pre>
+
+
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/etc/passwd</span></span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">bin:x:2:2:bin:/bin:/usr/sbin/nologin</span><br><span class="line">sys:x:3:3:sys:/dev:/usr/sbin/nologin</span><br><span class="line">sync:x:4:65534:sync:/bin:/bin/sync</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">...</span></span><br><span class="line">calvin:x:1000:1001::/home/calvin:/bin/sh</span><br></pre></td></tr></table></figure>
+
+<p>用户名 : 密码(x表示存放在shadow) : <strong>uid</strong> : <strong>gid</strong> : 注释 : 主目录(有权限的目录) : 登陆后使用的默认shell</p>
+<p>真正起到<strong>区分用户</strong>作用的是<strong>uid</strong>，0为root管理员，1~999为系统账号，1000~60000为一般账号</p>
+<p><code>/etc/shadow</code>中则记录了加密过后的密码和一些诸如修改时间，有效期等配置信息</p>
+<h3 id="文件权限控制"><a href="#文件权限控制" class="headerlink" title="文件权限控制"></a>文件权限控制</h3><p>使用<code>ls -h xxx</code>可以查看文件信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">ls</span> -l db.json</span></span><br><span class="line">-rwxrwxrwx 1 root root 292602 Nov 24 13:39 db.json</span><br></pre></td></tr></table></figure>
+
+<p>这里第一段是权限信息。</p>
+<p>第一个字符代表文件类型</p>
+<ul>
+<li>- 代表普通文件</li>
+<li>d 代表目录文件</li>
+<li>s 代表套接字文件</li>
+<li>p 代表管道文件</li>
+<li>c 代表字符文件</li>
+<li>b 代表块文件</li>
+<li>l 代表链接文件</li>
+</ul>
+<p>后面每三个字符为一组，分别代表owner&#x2F;group&#x2F;others的权限</p>
+<ul>
+<li><p>r 读</p>
+</li>
+<li><p>w 写</p>
+</li>
+<li><p>x 对文件执行&#x2F;对目录搜索</p>
+</li>
+<li><p>s setuid或setguid【只在owner和group项可设置】</p>
+<blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">ls</span> -l /bin/passwd</span></span><br><span class="line">-rwsr-xr-x 1 root root 68208 Jul 15  2021 /bin/passwd</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>t 对目录文件设置后，只有目录内文件的所有者才能更改文件【只在others项可设置】</p>
+</li>
+</ul>
+<p>可以使用<code>chmod</code>进行权限更改，例如777就对应rwxrwxrwx，而755则对应rwxr-xr-x。如果要设定owner的s位需要在前面加上4，group的s位加2，others的t位加1。例如1755对应rwxrwxrwt</p>
+<h3 id="进程权限控制"><a href="#进程权限控制" class="headerlink" title="进程权限控制"></a>进程权限控制</h3><ul>
+<li>euid：effective uid</li>
+<li>ruid：real uid【真实的uid】</li>
+<li>ssuid：saved set uid【拷贝自euid，便于控制子进程等uid】</li>
+</ul>
+<p>set uid实际设置的就是euid，类似的，也能设置gid。</p>
+<p>我们可以看一下完整的执行passwd的过程</p>
+<ul>
+<li><code>fork</code>出一个子进程，此时uid和gid都是real的</li>
+<li>passwd对于others允许执行，因此进程可以调用<code>exec</code>执行passwd文件</li>
+<li>passwd有s权限位，此时进程euid被设为root的uid，即0</li>
+<li>进程可以修改shadow文件</li>
+</ul>
+<h3 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h3><ul>
+<li><a href="https://www.lxlinux.net/2315.html">Linux权限原理详解</a></li>
+<li><a href="https://blog.csdn.net/hutongkoudemihu/article/details/125462312">Linux——&#x2F;etc&#x2F;passwd文件（管理用户和组）</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cpp_easygraph文档</title>
+    <url>/Blog/2022/10/23/cpp-easygraph%E6%96%87%E6%A1%A3/</url>
+    <content><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>cpp_easygraph主要由C++编写，利用<a href="https://github.com/pybind/pybind11">pybind11</a>框架实现用C++代码到python的桥接。在cpp_easygraph提供的类和方法中，暴露出的接口与python库源码的接口相同(即函数名、参数、效果等)。EasyGraph通过引入cpp_easygraph中的类和方法，将C++实现的内容嵌入到原先的代码中，从而实现类和高性能计算方法的扩展。</p>
+<h3 id="为何使用Pybind11？"><a href="#为何使用Pybind11？" class="headerlink" title="为何使用Pybind11？"></a>为何使用Pybind11？</h3><p>对于一个由C&#x2F;C++编写的python库来说，开发阶段的测试和最终代码的发布都需要开发者能够快捷且正确地编译代码生成目标文件。Pybind11是一个纯头文件的项目，一方面，它基于原生Python&#x2F;C API，兼容所有原生函数接口，另一方面，它仅仅保留了部分重要的函数和类，非常轻量，仅需在代码中包含头文件而不需要链接额外的静态库。因此，在不同的操作系统上，可以直接使用<code>python setup.py build_ext</code>进行编译和构建，这也极大地方便了开发运维一体化。</p>
+<h3 id="如何使用Pybind11"><a href="#如何使用Pybind11" class="headerlink" title="如何使用Pybind11"></a>如何使用Pybind11</h3><h4 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h4><p>前文所述，pybind11是一个纯头文件的项目，我们可以通过<code>pip install pybind11</code>直接进行安装。进入<code>python根目录/Lib/site-packages/pybind11/include/pybind11</code>中可以看到其提供的所有头文件。</p>
+<p>使用IDE(例如VS等)进行开发时，对于头文件目录相关的配置，可以将<code>python根目录/Lib/site-packages/pybind11/include</code>目录以及<code>Python.h</code>所在的<code>python根目录/include</code>目录加入配置项。对于库目录相关配置，只需将<code>python3x.lib</code>所在的<code>python根目录/libs</code>目录加入配置项即可。</p>
+<p>以Visual Studio 2022举例，目录项配置如下</p>
+<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7eaizu1dqj31n10so1iu.jpg" alt="image.png"  />
+
+<p>另外将输出类型改为dll，文件后缀改为pyd即可生成对应库文件。</p>
+<h4 id="代码编写"><a href="#代码编写" class="headerlink" title="代码编写"></a>代码编写</h4><p>假设要用C++实现如下python代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#文件名：foo.py，即我们要写一个名为foo的库</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Guest</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vip</span>(<span class="title class_ inherited__">Guest</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, no</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__(self, name)</span><br><span class="line">        self.no = no</span><br><span class="line">        </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Greeter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, **attr</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.cnt = <span class="number">0</span></span><br><span class="line">        self.attr = attr</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">greet</span>(<span class="params">self, guest, count = <span class="literal">False</span></span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Hello &quot;</span> + guest.name + <span class="string">&quot;!&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> count:</span><br><span class="line">	        self.cnt += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_localtime</span>():</span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    localtime = time.asctime(time.localtime(time.time()))</span><br><span class="line">    <span class="keyword">return</span> localtime</span><br></pre></td></tr></table></figure>
+
+<p>首先我们先来看<code>Guest</code>和<code>Vip</code>。我们可以定义好前两个类的继承关系和构造函数。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Guest</span> &#123;</span><br><span class="line">    <span class="built_in">Guest</span>(<span class="type">const</span> std::string&amp; name) :<span class="built_in">name</span>(name) &#123;&#125;</span><br><span class="line">    std::string name;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Vip</span>: <span class="keyword">public</span> Guest &#123;</span><br><span class="line">    <span class="built_in">Vip</span>(<span class="type">const</span> std::string&amp; name, <span class="type">int</span> no) :<span class="built_in">Guest</span>(name) &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;no = no;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> no;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们声明一个模块<code>foo</code>，并将这两个类注册进来。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="built_in">PYBIND11_MODULE</span>(foo, m) &#123; <span class="comment">// 宏PYBIND11_MODULE的第一个参数是导出后在python中的包名，第二个参数是下文module实例的符号</span></span><br><span class="line">    py::<span class="built_in">class_</span>&lt;Guest&gt;(m, <span class="string">&quot;Guest&quot;</span>) <span class="comment">// class_模板中填写要导出的C++类，参数第二个是导出后在python中的类名</span></span><br><span class="line">        .<span class="built_in">def</span>(py::<span class="built_in">init</span>&lt;<span class="type">const</span> std::string&amp;&gt;()); <span class="comment">// init模板中填写构造函数的类型表</span></span><br><span class="line">    py::<span class="built_in">class_</span>&lt;Vip, Guest&gt;(m, <span class="string">&quot;Vip&quot;</span>) <span class="comment">// class_模板中第二个参数开始填写要继承的C++类</span></span><br><span class="line">        .<span class="built_in">def</span>(py::<span class="built_in">init</span>&lt;<span class="type">const</span> std::string&amp;, <span class="type">int</span>&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们来实现Greeter。Greeter的构造函数比较复杂，是可变参数，需要固定的格式(args, kwargs)。这里将其写在类的外面。类的方法可以写在类的里面，但需要加上<code>static</code>声明，不需要<code>self</code>参数，否则需要写在类外面，并且第一个参数为对象自身。</p>
+<p>我们希望把Greeter的<code>cnt</code>属性也给暴露出来，因此需要写一个get方法，这个方法写在类里面就好。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Greeter</span> &#123;</span><br><span class="line">    std::string name;</span><br><span class="line">    <span class="type">int</span> cnt;</span><br><span class="line">    py::dict attr;</span><br><span class="line">    </span><br><span class="line">    <span class="function">py::object <span class="title">get_cnt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> py::<span class="built_in">cast</span>(<span class="keyword">this</span>-&gt;cnt); <span class="comment">// py::cast可以将参数转为py::object类型(如果能转换的话)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">py::object <span class="title">Greeter__init__</span><span class="params">(py::args args, py::kwargs kwargs)</span> </span>&#123;</span><br><span class="line">    py::object self = args[<span class="number">0</span>]; <span class="comment">// self一般是第0个positional parameter</span></span><br><span class="line">    self.<span class="built_in">attr</span>(<span class="string">&quot;__init__&quot;</span>)(); <span class="comment">// .attr方法类似于python中取attribute，返回一个可能是属性也可能是方法的对象，这里用&quot;()&quot;执行__init__方法进行默认构造的初始化</span></span><br><span class="line">    Greeter&amp; g = self.<span class="built_in">cast</span>&lt;Greeter&amp;&gt;(); <span class="comment">// cast方法可以将python类型转为C++类型(如果能转换的话)</span></span><br><span class="line">    std::string name = args[<span class="number">1</span>].<span class="built_in">cast</span>&lt;std::string&gt;(); <span class="comment">// 这里假定name是positional传参的，不在attr中，实际情况可能并非如此</span></span><br><span class="line">    py::dict attr = kwargs;</span><br><span class="line">    g.name = name;</span><br><span class="line">    g.cnt = <span class="number">0</span>;</span><br><span class="line">    g.attr = attr;</span><br><span class="line">    <span class="keyword">return</span> py::<span class="built_in">none</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">py::object <span class="title">Greeter_greet</span><span class="params">(py::object self, py::object guest, py::object count)</span> </span>&#123;</span><br><span class="line">    Greeter&amp; g = self.<span class="built_in">cast</span>&lt;Greeter&amp;&gt;();</span><br><span class="line">    Guest&amp; gu = guest.<span class="built_in">cast</span>&lt;Guest&amp;&gt;();</span><br><span class="line">    py::<span class="built_in">print</span>(py::<span class="built_in">str</span>(<span class="string">&quot;Hello &quot;</span>) + py::<span class="built_in">str</span>(gu.name) + py::<span class="built_in">str</span>(<span class="string">&quot;!&quot;</span>)); <span class="comment">// 这里直接调用了python中print，并使用了py::str重载过的+</span></span><br><span class="line">    <span class="keyword">if</span> (count.<span class="built_in">cast</span>&lt;<span class="type">bool</span>&gt;()) &#123; <span class="comment">// 不能用if(py::object)，那样是判断指针是否为空 </span></span><br><span class="line">        g.cnt += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> py::<span class="built_in">none</span>(); <span class="comment">// 没有返回值，返回None</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于可变参数需要运行时动态绑定，因此不能上之前一样用静态的模板编译，因此参考Boost Python的<a href="https://wiki.python.org/moin/boost.python/HowTo#A.22Raw.22_constructor">Raw Constructor</a>加上个人实验，发现如下形式有效(与Boost Python相反)。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 在PYBIND11_MODULE中加上</span></span><br><span class="line">py::<span class="built_in">class_</span>&lt;Greeter&gt;(m, <span class="string">&quot;Greeter&quot;</span>)</span><br><span class="line">    .<span class="built_in">def</span>(py::init&lt;&gt;())</span><br><span class="line">    .<span class="built_in">def</span>(<span class="string">&quot;__init__&quot;</span>, &amp;Greeter__init__) <span class="comment">// 可变参数的函数不需要写py::arg</span></span><br><span class="line">    .<span class="built_in">def</span>(<span class="string">&quot;greet&quot;</span>, &amp;Greeter_greet, py::<span class="built_in">arg</span>(<span class="string">&quot;guest&quot;</span>), py::<span class="built_in">arg</span>(<span class="string">&quot;count&quot;</span>) = <span class="literal">false</span>) <span class="comment">// py::arg中填写导出后在python中的方法名，可以对arg对象直接赋值来规定参数默认值</span></span><br><span class="line">    .<span class="built_in">def_property</span>(<span class="string">&quot;cnt&quot;</span>, &amp;Greeter::get_cnt, <span class="literal">nullptr</span>); <span class="comment">// 第一个参数为导出后在python中的属性名，二三参数分别为get和set该属性的函数指针</span></span><br></pre></td></tr></table></figure>
+
+<p>最后我们写一下<code>get_localtime</code>方法</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">py::object <span class="title">get_localtime</span><span class="params">()</span> </span>&#123; <span class="comment">// 不需要self参数</span></span><br><span class="line">    py::object time = py::module_::<span class="built_in">import</span>(<span class="string">&quot;time&quot;</span>); <span class="comment">// 运行时导入time模块</span></span><br><span class="line">    py::object localtime = time.<span class="built_in">attr</span>(<span class="string">&quot;asctime&quot;</span>)(time.<span class="built_in">attr</span>(<span class="string">&quot;localtime&quot;</span>)(time.<span class="built_in">attr</span>(<span class="string">&quot;time&quot;</span>)()));</span><br><span class="line">    <span class="keyword">return</span> localtime;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在PYBIND11_MODULE中加上</span></span><br><span class="line">m.<span class="built_in">def</span>(<span class="string">&quot;get_localtime&quot;</span>, &amp;get_localtime); <span class="comment">// 写法与method相同</span></span><br></pre></td></tr></table></figure>
+
+<p>生成foo库并实验一下，发现代码正确无误。</p>
+<img src="http://tva1.sinaimg.cn/large/006g42Mjly1h7eejvwnc9j30rb0kwne3.jpg" alt="image.png" style="zoom:50%;" />
+
+<p>上述代码涉及如下Pybind11使用知识点：</p>
+<ul>
+<li>C++变量与py::object对象的转换</li>
+<li>声明一个module并注册类和方法<ul>
+<li>类继承</li>
+<li>类方法的注册<ul>
+<li>init方法</li>
+<li>可变参数(init或普通方法)</li>
+<li>默认参数</li>
+</ul>
+</li>
+<li>类属性的注册<ul>
+<li>getter</li>
+<li>setter</li>
+</ul>
+</li>
+<li>模块方法的注册</li>
+</ul>
+</li>
+<li>运行时导入其他python模块</li>
+<li>正确使用if判断</li>
+<li>none返回值</li>
+</ul>
+<p>其余一些tricky的使用大多与python有关，例如<code>set</code>等内置类型或方法可以通过<code>builtins</code>包拿到，以及可以通过<code>object.__class__()</code>新建一个对象等。关于API的使用使用可参考<a href="https://pybind11.readthedocs.io/en/stable/#">官方文档</a>，<a href="https://github.com/pybind/pybind11/discussions">官方仓库讨论</a>，<a href="https://github.com/pybind/pybind11/issues">官方仓库issue</a>，stackoverflow等平台</p>
+<h3 id="cpp-easygraph项目架构"><a href="#cpp-easygraph项目架构" class="headerlink" title="cpp_easygraph项目架构"></a>cpp_easygraph项目架构</h3><h4 id="目录架构"><a href="#目录架构" class="headerlink" title="目录架构"></a>目录架构</h4><p>目录架构与easygraph基本保持一致。easygraph中有的文件夹和.py文件，cpp_easygraph目录下也有对应文件夹和cpp文件。</p>
+<p>cpp_easygraph的<code>common</code>文件夹中存放共用的头文件以及一些工具函数，这部分在easygraph中没有对应。</p>
+<p>python通过可以嵌套的<code>__init__.py</code>来指定import时导入的符号，以及在py文件中使用<code>__all__</code>来指定文件暴露出去的符号。cpp_easygraph使用<code>__init__.h</code>文件期望达到相同的抽象级别。注意，这里使用头文件仅仅为了达成一层include时的抽象，想要include某个文件夹下所有符号，包含该<code>__init__.h</code>即可。举例</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// cpp_easygraph/functions/path/path.h</span></span><br><span class="line">py::object _dijkstra_multisource(py::object G, py::object sources, py::object weight, py::object target);</span><br><span class="line"><span class="comment">// other functions need to be exposed...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// cpp_easygraph/functions/path/__init__.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;path.h&quot;</span></span></span><br><span class="line"><span class="comment">// other header files need to be included</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// cpp_easygraph/function/__init__.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;path/__init__.h&quot;</span></span></span><br><span class="line"><span class="comment">// other header files need to be included</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// cpp_easygraph/cpp_easygraph.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;functions/__init__.h&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="类架构"><a href="#类架构" class="headerlink" title="类架构"></a>类架构</h4><p>目前仅仅实现了Graph和DiGraph两个类，DiGraph继承于Graph，二者仅有python绑定的函数不同，成员变量是相同的。</p>
+<p>实际函数中，要使用成员变量，直接cast到基类的引用Graph&amp;即可。要使用方法，通过传入的py::object对象使用attr进行对应python方法的执行。</p>
+<h4 id="类设计"><a href="#类设计" class="headerlink" title="类设计"></a>类设计</h4><p>实现Graph类的思路大体沿用easygraph，node和adj均为与python代码一致的map结构。python中dict的键可以是任意可哈希对象，easygraph也支持任意这样的对象成为node.但是C++中的map暂时无法支持多样的类型，因此维护两个内部映射的<code>node_to_id</code>和<code>id_to_node</code>，在C++函数计算以及数据结构存储时使用node_t(目前typedef为int，可更换为unsigned等)，在函数解析参数和函数返回时使用进行对象的转换。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// common.h</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">node_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">float</span> <span class="type">weight_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Graph.h</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Graph</span> &#123;</span><br><span class="line">    node_dict_factory node;</span><br><span class="line">    adj_dict_factory adj;</span><br><span class="line">    py::dict node_to_id, id_to_node, graph;</span><br><span class="line">    <span class="type">node_t</span> id;</span><br><span class="line">    <span class="type">bool</span> dirty_nodes, dirty_adj;</span><br><span class="line">    py::object nodes_cache, adj_cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Graph需要暴露adj和node属性，每次都查找dict生成显然对速度不利。考虑到用户在进行数据增删和数据使用往往是两个不同的时间段，这里牺牲空间加入两个cache对象，当发生数据结构内容改变时置dirty标志为1，下次调用属性get方法时就会重新生成一次，并抹去dirty，以此减少时间消耗。</p>
+<p>node和adj的attr部分默认为std::string到weight_t(目前typedef为float，可更换为double等)的映射。</p>
+<h3 id="将cpp-easygraph嵌入到easygraph"><a href="#将cpp-easygraph嵌入到easygraph" class="headerlink" title="将cpp_easygraph嵌入到easygraph"></a>将cpp_easygraph嵌入到easygraph</h3><h4 id="类的嵌入"><a href="#类的嵌入" class="headerlink" title="类的嵌入"></a>类的嵌入</h4><p>尝试导入cpp_easygraph并定义GraphC和DiGraph类。两个类继承于cpp_easygraph中C++编写的类，并定义cflag以便在运行时与python类区分。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># graph.py</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">import</span> cpp_easygraph</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">GraphC</span>(cpp_easygraph.Graph):</span><br><span class="line">        cflag = <span class="number">1</span> <span class="comment"># </span></span><br><span class="line"><span class="keyword">except</span> ImportError:</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">GraphC</span>:</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, **graph_attr</span>):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;...&quot;</span>)</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法的嵌入"><a href="#方法的嵌入" class="headerlink" title="方法的嵌入"></a>方法的嵌入</h4><p>为了优雅地嵌入cpp_easygraph的方法，编写了一个装饰器以用于装饰对应的python函数，使得函数最终能根据传入类的类型调用对应语言编写的方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># decorators.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hybrid</span>(<span class="params">cpp_method_name</span>): <span class="comment"># 函数闭包实现装饰器，参数为cpp_easygraph中导出的方法名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_hybrid</span>(<span class="params">py_method</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">method</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">            G = args[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span> G.cflag <span class="keyword">and</span> cpp_method_name <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>: <span class="comment"># 判断是否为C++编写的类</span></span><br><span class="line">                <span class="keyword">import</span> cpp_easygraph</span><br><span class="line">                <span class="keyword">try</span>:</span><br><span class="line">                    cpp_method = <span class="built_in">getattr</span>(cpp_easygraph, cpp_method_name)</span><br><span class="line">                    <span class="keyword">return</span> cpp_method(*args, **kwargs) <span class="comment"># 调用C++编写的方法</span></span><br><span class="line">                <span class="keyword">except</span> AttributeError <span class="keyword">as</span> e:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">f&quot;Warning: <span class="subst">&#123;e&#125;</span>. use python method instead.&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> py_method(*args, **kwargs) <span class="comment"># 否则依旧调用python编写的方法</span></span><br><span class="line">        <span class="keyword">return</span> method</span><br><span class="line">    <span class="keyword">return</span> _hybrid</span><br></pre></td></tr></table></figure>
+
+<p>使用装饰器举例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@hybrid(<span class="params"><span class="string">&quot;cpp_density&quot;</span></span>) </span><span class="comment"># 如果传入GraphC对象，则调用cpp_easygraph.cpp_density</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">density</span>(<span class="params">G</span>):</span><br><span class="line">    n = G.number_of_nodes()</span><br><span class="line">    m = G.number_of_edges()</span><br><span class="line">    <span class="keyword">if</span> m == <span class="number">0</span> <span class="keyword">or</span> n &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    d = m / (n * (n - <span class="number">1</span>))</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> G.is_directed():</span><br><span class="line">        d *= <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> d</span><br></pre></td></tr></table></figure>
+
+<h4 id="实际调用"><a href="#实际调用" class="headerlink" title="实际调用"></a>实际调用</h4><p>装饰器使得函数会自动根据传入的类选择对应代码段执行。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> easygraph <span class="keyword">as</span> eg</span><br><span class="line">G1 = eg.Graph()</span><br><span class="line">G2 = eg.GraphC()</span><br><span class="line">G1.add_edges([(<span class="number">1</span>,<span class="number">2</span>), (<span class="number">3</span>,<span class="number">4</span>)], [&#123;&#125;, &#123;&#125;])</span><br><span class="line">G2.add_edges([(<span class="number">1</span>,<span class="number">2</span>), (<span class="number">3</span>,<span class="number">4</span>)], [&#123;&#125;, &#123;&#125;])</span><br><span class="line">G3 = G2.py() <span class="comment"># G2转为Graph类型</span></span><br><span class="line">G4 = G.cpp() <span class="comment"># G1转为GraphC类型</span></span><br><span class="line">eg.density(G1) <span class="comment"># 调用python代码写的函数</span></span><br><span class="line">eg.density(G2) <span class="comment"># 调用C++代码写的函数</span></span><br><span class="line">eg.density(G3) <span class="comment"># 调用python代码写的函数</span></span><br><span class="line">eg.density(G4) <span class="comment"># 调用C++代码写的函数</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h3><ul>
+<li><p>C++实现的Graph类中，python dict类型的nodes和adj以cache的形式存储，导致其并不能做到所见即所得。例如在python中，要对node属性做修改仅需<code>G.nodes[...][key]=value</code>即可，但在C++中，这无法改变以std::unordered_map形式存储的实际数据。另外cache无法做到精确更新，每次都是重新生成一遍dict，效率不高。</p>
+<p>思考过的解决方式有：自定义一个继承于dict的类，用于精细化控制nodes和adj的cache，内部封装所属Graph的指针，但这带来两个问题：</p>
+<ul>
+<li>如果这个类由C++来写，此类就没有办法继承python dict，因为类的方法和成员等都是运行时确定的，无法静态编译。参见<a href="https://github.com/pybind/pybind11/issues/1193">#1193</a></li>
+<li>如果这个类由Python来写，那么Graph下属c该类，该类又需要存储Graph的引用，会造成循环引用，无法判断gc能否正常回收内存。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>Pybind11</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/Blog/2022/10/10/hello-world/</url>
+    <content><![CDATA[<p>花了一晚上的时间，终于搭建好hexo环境啦！以后应该会在这里分享一些技术相关的文字，或者个人生活的小感悟~</p>
+<p>总之按照惯例道一声Hello World！</p>
+]]></content>
+      <categories>
+        <category>杂谈点滴</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>k8s集群部署</title>
+    <url>/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[<p>使用工具：<a href="https://github.com/easzlab/kubeasz">kubeasz</a></p>
+<h3 id="单节点集群部署"><a href="#单节点集群部署" class="headerlink" title="单节点集群部署"></a>单节点集群部署</h3><p>参考：<a href="https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md">快速指南</a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export release=3.3.1</span><br><span class="line">wget https://github.com/easzlab/kubeasz/releases/download/$&#123;release&#125;/ezdown</span><br><span class="line">chmod +x ./ezdown</span><br><span class="line"></span><br><span class="line">./ezdown -D #下载镜像等文件</span><br><span class="line">./ezdown -S #容器化运行kubeasz</span><br><span class="line"></span><br><span class="line">docker exec -it kubeasz ezctl start-aio #使用默认配置安装aio集群</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get svc -A #查看所有服务，如果出现kubectl: command not found的报错可以重新登录使环境变量生效</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">删除集群</span></span><br><span class="line">docker exec -it kubeasz ezctl destroy default</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>单节点的集群在虚拟机挂起或关机重启时进程会挂掉，导致无法再控制kubectl等，可以重新安装aio集群，并按照报错提示删除原来的文件</li>
+</ul>
+<h3 id="多节点集群部署"><a href="#多节点集群部署" class="headerlink" title="多节点集群部署"></a>多节点集群部署</h3><p>参考：<a href="https://zhuanlan.zhihu.com/p/562533111">一键安装Kubernetes？使用kubeasz带你10分钟装好一个k8s集群，不受国内网络环境影响</a></p>
+<p>在<strong>每台机器上</strong>进行如下操作配置ssh免密登录，安装kubeasz</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd  ~/.ssh #如果没有该文件夹，可以ssh自己一下</span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">ssh-copy-id $&#123;ip1&#125; #这里的ip是你希望免密登录的机器ip，根据提示输入目标机器的密码</span><br><span class="line">ssh-copy-id $&#123;ip2&#125;</span><br><span class="line">... #请将包括自己在内的所有机器的ip都执行一遍</span><br><span class="line"></span><br><span class="line">export release=3.3.1</span><br><span class="line">wget https://github.com/easzlab/kubeasz/releases/download/$&#123;release&#125;/ezdown</span><br><span class="line">chmod +x ./ezdown</span><br><span class="line"></span><br><span class="line">./ezdown -D #下载镜像等文件</span><br><span class="line">./ezdown -S #容器化运行kubeasz</span><br></pre></td></tr></table></figure>
+
+<p>在某台机器上执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker exec -it kubeasz ezctl new k8s-01 #创建新集群k8s-01</span><br><span class="line">vi /etc/kubeasz/clusters/k8s-01/hosts #修改配置文件的如下三项：</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[etcd]为数据库要放在哪些机器上</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[kube_master]为master节点</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[kube_node]为work节点</span></span><br><span class="line">docker exec -it kubeasz ezctl setup k8s-01 all #一键安装</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，断开ssh重连使环境变量生效</p>
+<h3 id="查看dashboard"><a href="#查看dashboard" class="headerlink" title="查看dashboard"></a>查看dashboard</h3><p>打印服务信息，根据port拿到端口：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl get svc -A | grep kubernetes-dashboard</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">port 443:30255/TCP</span></span><br></pre></td></tr></table></figure>
+
+<p>打印token等信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl describe -n kube-system secrets admin-user</span><br></pre></td></tr></table></figure>
+
+<p>访问https:&#x2F;&#x2F;${NodeIP}:${NodePort}【Chrome可能会禁止访问，可以使用其他浏览器】，输入对应token即可</p>
+<img src="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132816190.png" class="" title="image-20221209132816190">
+
+<img src="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132929364.png" class="" title="image-20221209132929364">
+
+
+
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>Kubernetes</tag>
+        <tag>Kubeasz</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟机网络集群配置</title>
+    <url>/Blog/2022/11/30/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>本文主要记录使用虚拟机搭建网络集群时的基本流程。所使用的环境为</p>
+<ul>
+<li>宿主机：Win11，amd芯片</li>
+<li>软件：VirtualBox 6.1</li>
+<li>虚拟机镜像：Centos 7.9，下载源</li>
+</ul>
+<h4 id="虚拟机网卡配置"><a href="#虚拟机网卡配置" class="headerlink" title="虚拟机网卡配置"></a>虚拟机网卡配置</h4><p>配置两块网卡，一块Host-Only，一块NAT。</p>
+<img src="006g42Mjgy1h8n1rbfcuyj30tz0f0q8e.jpg" alt="image.jpg" style="zoom: 75%;" />
+
+<img src="image-20221201105014036.png" alt="image-20221201105014036" style="zoom:75%;" />
+
+<p>为Host-Only网络使用的适配器<code>VirtualBox Host-Only Ethernet Adapter</code>配置ip和子网掩码，以及DHCP服务器</p>
+<img src="微信截图_20221201110653.png" alt="image-20221201110809813" style="zoom: 50%;" />
+
+<img src="image-20221201112503584.png" alt="image-20221201112503584" style="zoom:67%;" />
+
+<p>同时可以在主机中使用<code>ipconfig</code>查看是否设置成功</p>
+<img src="image-20221201111404548.png" alt="image-20221201111404548" style="zoom: 67%;" />
+
+<h4 id="虚拟机网络设置"><a href="#虚拟机网络设置" class="headerlink" title="虚拟机网络设置"></a>虚拟机网络设置</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-enp0s3</span><br></pre></td></tr></table></figure>
+
+<p>在文件中做如下修改，没有的话就加入【这步的目的是固定IP地址】</p>
+<ul>
+<li>BOOTPROTO&#x3D;static</li>
+<li>ONBOOT&#x3D;yes</li>
+<li>IPADDR&#x3D;192.168.56.x【这里x为1~255，除了前面适配器和DHCP服务器的ip】</li>
+</ul>
+<p>重启网络服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl restart network # 或service network restart</span><br></pre></td></tr></table></figure>
+
+<p>查看本机ip是否被修改为<code>192.168.56.x</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ip addr</span><br></pre></td></tr></table></figure>
+
+<p>可以看到ip已经被成功修改</p>
+<img src="/Blog/2022/11/30/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/image-20221201113804519.png" class="" title="image-20221201113804519">
+
+<p>尝试ping外界(之前设置的DHCP服务器)</p>
+<img src="/Blog/2022/11/30/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/image-20221201113924629.png" class="" title="image-20221201113924629">
+
+<p>从主机建立SSH连接</p>
+<img src="image-20221201114005279.png" alt="image-20221201114005279" style="zoom:50%;" />
+
+<p>可以发现已经能连通主机和虚拟机</p>
+<h3 id="踩坑实录"><a href="#踩坑实录" class="headerlink" title="踩坑实录"></a>踩坑实录</h3><p>若执行<code>ip addr</code>时发现NAT网卡没能拿到ip，可以通过<code>ifup NAT网卡名</code>来启动网卡服务。</p>
+<p>例如负责连接外网的是<code>enp0s8</code>，只有mac地址而没有ip地址，说明该网卡没有启动，用<code>ifup enp0s8</code>启动网卡即可。</p>
+]]></content>
+      <categories>
+        <category>技术视野</category>
+      </categories>
+      <tags>
+        <tag>VirtualBox</tag>
+      </tags>
+  </entry>
+</search>

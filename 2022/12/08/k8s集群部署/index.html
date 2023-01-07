@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="使用工具：kubeasz 单节点集群部署参考：快速指南 12345678export release&#x3D;3.3.1wget https:&#x2F;&#x2F;github.com&#x2F;easzlab&#x2F;kubeasz&#x2F;releases&#x2F;download&#x2F;$&amp;#123;release&amp;#125;&#x2F;ezdownchmod +x .&#x2F;ezdown.&#x2F;ezdown -D #下载镜像等文件.&#x2F;ezdown -S #容器化运行kube">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s集群部署">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="使用工具：kubeasz 单节点集群部署参考：快速指南 12345678export release&#x3D;3.3.1wget https:&#x2F;&#x2F;github.com&#x2F;easzlab&#x2F;kubeasz&#x2F;releases&#x2F;download&#x2F;$&amp;#123;release&amp;#125;&#x2F;ezdownchmod +x .&#x2F;ezdown.&#x2F;ezdown -D #下载镜像等文件.&#x2F;ezdown -S #容器化运行kube">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132816190.png">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132929364.png">
+<meta property="article:published_time" content="2022-12-08T13:49:04.000Z">
+<meta property="article:modified_time" content="2022-12-26T08:50:30.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Kubeasz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132816190.png">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/","path":"2022/12/08/k8s集群部署/","title":"k8s集群部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s集群部署 | Calvin Cui</title>
+  
+
+
+
+
+
+<link rel="dns-prefetch" href="https://3rtju6.deta.dev/">
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">14</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">4</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">9</span></a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.</span> <span class="nav-text">单节点集群部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">2.</span> <span class="nav-text">多节点集群部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bdashboard"><span class="nav-number">3.</span> <span class="nav-text">查看dashboard</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s集群部署 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s集群部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-12-08 21:49:04" itemprop="dateCreated datePublished" datetime="2022-12-08T21:49:04+08:00">2022-12-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-26 16:50:30" itemprop="dateModified" datetime="2022-12-26T16:50:30+08:00">2022-12-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E6%8A%80%E6%9C%AF%E8%A7%86%E9%87%8E/" itemprop="url" rel="index"><span itemprop="name">技术视野</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline: </span>
+  
+    <a title="waline" href="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>使用工具：<a target="_blank" rel="noopener" href="https://github.com/easzlab/kubeasz">kubeasz</a></p>
+<h3 id="单节点集群部署"><a href="#单节点集群部署" class="headerlink" title="单节点集群部署"></a>单节点集群部署</h3><p>参考：<a target="_blank" rel="noopener" href="https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md">快速指南</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export release=3.3.1</span><br><span class="line">wget https://github.com/easzlab/kubeasz/releases/download/$&#123;release&#125;/ezdown</span><br><span class="line">chmod +x ./ezdown</span><br><span class="line"></span><br><span class="line">./ezdown -D #下载镜像等文件</span><br><span class="line">./ezdown -S #容器化运行kubeasz</span><br><span class="line"></span><br><span class="line">docker exec -it kubeasz ezctl start-aio #使用默认配置安装aio集群</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc -A #查看所有服务，如果出现kubectl: command not found的报错可以重新登录使环境变量生效</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">删除集群</span></span><br><span class="line">docker exec -it kubeasz ezctl destroy default</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>单节点的集群在虚拟机挂起或关机重启时进程会挂掉，导致无法再控制kubectl等，可以重新安装aio集群，并按照报错提示删除原来的文件</li>
+</ul>
+<h3 id="多节点集群部署"><a href="#多节点集群部署" class="headerlink" title="多节点集群部署"></a>多节点集群部署</h3><p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/562533111">一键安装Kubernetes？使用kubeasz带你10分钟装好一个k8s集群，不受国内网络环境影响</a></p>
+<p>在<strong>每台机器上</strong>进行如下操作配置ssh免密登录，安装kubeasz</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cd  ~/.ssh #如果没有该文件夹，可以ssh自己一下</span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">ssh-copy-id $&#123;ip1&#125; #这里的ip是你希望免密登录的机器ip，根据提示输入目标机器的密码</span><br><span class="line">ssh-copy-id $&#123;ip2&#125;</span><br><span class="line">... #请将包括自己在内的所有机器的ip都执行一遍</span><br><span class="line"></span><br><span class="line">export release=3.3.1</span><br><span class="line">wget https://github.com/easzlab/kubeasz/releases/download/$&#123;release&#125;/ezdown</span><br><span class="line">chmod +x ./ezdown</span><br><span class="line"></span><br><span class="line">./ezdown -D #下载镜像等文件</span><br><span class="line">./ezdown -S #容器化运行kubeasz</span><br></pre></td></tr></table></figure>
+
+<p>在某台机器上执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it kubeasz ezctl new k8s-01 #创建新集群k8s-01</span><br><span class="line">vi /etc/kubeasz/clusters/k8s-01/hosts #修改配置文件的如下三项：</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[etcd]为数据库要放在哪些机器上</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[kube_master]为master节点</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">[kube_node]为work节点</span></span><br><span class="line">docker exec -it kubeasz ezctl setup k8s-01 all #一键安装</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，断开ssh重连使环境变量生效</p>
+<h3 id="查看dashboard"><a href="#查看dashboard" class="headerlink" title="查看dashboard"></a>查看dashboard</h3><p>打印服务信息，根据port拿到端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc -A | grep kubernetes-dashboard</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">port 443:30255/TCP</span></span><br></pre></td></tr></table></figure>
+
+<p>打印token等信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe -n kube-system secrets admin-user</span><br></pre></td></tr></table></figure>
+
+<p>访问https:&#x2F;&#x2F;${NodeIP}:${NodePort}【Chrome可能会禁止访问，可以使用其他浏览器】，输入对应token即可</p>
+<img src="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132816190.png" class="" title="image-20221209132816190">
+
+<img src="/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/image-20221209132929364.png" class="" title="image-20221209132929364">
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/Blog/tags/Kubeasz/" rel="tag"># Kubeasz</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2022/11/30/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/" rel="prev" title="虚拟机网络集群配置">
+                  <i class="fa fa-chevron-left"></i> 虚拟机网络集群配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2023/01/07/Docker%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="next" title="Docker网络虚拟化">
+                  Docker网络虚拟化 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"en","enable":true,"serverURL":"https://3rtju6.deta.dev/","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"locale":{"placeholder":"Feel free to comment here..."},"avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/Blog/2022/12/08/k8s%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+</body>
+</html>
