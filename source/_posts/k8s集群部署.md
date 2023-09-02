@@ -60,14 +60,17 @@ chmod +x ./ezdown
 
 ```shell
 docker exec -it kubeasz ezctl new k8s-01 #创建新集群k8s-01
-vi /etc/kubeasz/clusters/k8s-01/hosts #修改配置文件的如下三项：
+vi /etc/kubeasz/clusters/k8s-01/hosts #修改配置文件的如下几项：
 #[etcd]为数据库要放在哪些机器上
 #[kube_master]为master节点
 #[kube_node]为work节点
+#CLUSTER_NETWORK可以选用结构简单的flannel
 docker exec -it kubeasz ezctl setup k8s-01 all #一键安装
 ```
 
-安装完成后，断开ssh重连使环境变量生效
+安装完成后，运行`source ~/.bashrc`或断开ssh重连使环境变量生效
+
+同样使用`docker exec -it kubeasz ezctl destroy k8s-01`**删除集群**
 
 ### 查看dashboard
 

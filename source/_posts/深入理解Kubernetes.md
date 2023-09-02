@@ -264,7 +264,7 @@ spec:
 一个使用Pod来组合war程序包与tomcat服务器的例子：
 
 ```yaml
-apiVersion: apps/v1
+apiVersion: v1
 kind: Pod
 metadata:
   name: javaweb
@@ -823,7 +823,7 @@ CRD的创建这部分书上代码不全且版本落后，具体例子可参考[s
 
 > Informer往往响应迅速，而控制循环则可能会比较慢，因此用工作队列可以解耦二者
 
-#### 基于角色的权限控制：RABC
+#### 基于角色的权限控制：RBAC
 
 Role-based access control
 
@@ -835,7 +835,7 @@ Role-based access control
 
 ```yaml
 kind: Role
-apiVersion: rabc.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: mynamespace #通过namespace(逻辑上的管理单位，API对象默认为default)来指定产生作用的范围
   name: example-role
@@ -848,18 +848,18 @@ rules:
 
 ```yaml
 kind: RoleBinding
-apiVersion: rabc.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: mynamespace
   name: example-rolebinding
 subjects:
 - kind: User #作用对象为User类型，即k8s的用户
   name: exampe-user
-  apiGroup: rabc.authorization.k8s.io
+  apiGroup: rbac.authorization.k8s.io
 roleRef: #要绑定的Role
   kind: Role
   name: example-role #绑定之前定义的example-role
-  apiGroup: rabc.authorization.k8s.io
+  apiGroup: rbac.authorization.k8s.io
 ```
 
 对于非Namespaced的对象，比如Node等等，可以使用ClusterRole和ClusterRoleBinding，在metadata中不需要有namespace项
@@ -874,7 +874,7 @@ metadata:
   name: example-sa
 #----------------------------
 kind: RoleBinding
-apiVersion: rabc.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: mynamespace
   name: example-rolebinding
@@ -885,7 +885,7 @@ subjects:
 roleRef:
   kind: Role
   name: example-role
-  apiGroup: rabc.authorization.k8s.io
+  apiGroup: rbac.authorization.k8s.io
 ```
 
 创建完SA之后，k8s会自动生成一个secret对象。之后可以在Pod的`spec`中指定`serviceAccountName`，k8s会将证书文件挂载到容器内（namespace下没有声明SA的，会创建一个拥有大部分权限的default SA，因此生产环境中可以为default SA规定**只读**权限）。
@@ -896,7 +896,7 @@ roleRef:
 subjects:
 - kind: Group
   name: system:serviceaccounts:mynamespace #如果仅有system:serviceaccounts就是针对所有namespace
-  apiGroup: rabc.authorization.k8s.io
+  apiGroup: rbac.authorization.k8s.io
 ```
 
 四个内置ClusterRole：`cluster-admin`，`admin`，`edit`，`view`
@@ -1219,7 +1219,7 @@ Service也通过iptables设置转发规则，通过对转发目的的概率设�
 Ingress相当于Service的"Service"
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   ...
