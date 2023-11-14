@@ -16,7 +16,7 @@
     "hexo": "^6.3.0",
     "hexo-asset-img": "github:unparalleled-calvin/hexo-asset-img#main",
     "hexo-book-card": "github:Unparalleled-Calvin/hexo-book-card#master",
-    "hexo-deployer-git": "^3.0.0",
+    "hexo-deployer-git": "^4.0.0",
     "hexo-excerpt": "^1.3.0",
     "hexo-filter-mermaid-diagrams": "^1.0.5",
     "hexo-generator-archive": "^1.0.0",
