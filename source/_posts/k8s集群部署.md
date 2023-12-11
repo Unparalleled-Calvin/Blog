@@ -7,6 +7,10 @@ date: 2022-12-08 21:49:04
 
 使用工具：[kubeasz](https://github.com/easzlab/kubeasz)
 
+### 安装须知
+
+本文中所有命令**均需在root账户下执行**，使用root登录机器或使用`su`命令切换到root用户均可，但**不可使用sudo代替**。
+
 ### 单节点集群部署
 
 参考：[快速指南](https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md)
@@ -23,7 +27,7 @@ docker exec -it kubeasz ezctl start-aio #使用默认配置安装aio集群
 ```
 
 ```shell
-kubectl get svc -A #查看所有服务，如果出现kubectl: command not found的报错可以重新登录使环境变量生效
+kubectl get svc -A #查看所有服务，如果出现kubectl: command not found的报错可以重新登录或执行source ~/.bashrc使环境变量生效
 ```
 
 ```shell
