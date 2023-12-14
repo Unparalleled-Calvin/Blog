@@ -915,7 +915,7 @@ images: images
 # Waline
 # For more information: https://waline.js.org, https://github.com/walinejs/waline
 waline:
-  enable: true
+  enable: false
   serverURL: https://3rtju6.deta.dev/
   locale:
     placeholder: Feel free to comment here...
