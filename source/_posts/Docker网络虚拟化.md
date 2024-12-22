@@ -52,13 +52,13 @@ Docker容器使用了LinuxNetwork Namepsace，并在宿主机上创建了docker0
 > nsenter -t `docker inspect --format '{{.State.Pid}}' busybox` -n ip -d link show #进入该容器namespace并查看链路层相关接口
 > ```
 >
-> ![image-20230107171508344](Docker网络虚拟化/image-20230107171508344.png)
+> ![image-20230107171508344](Docker网络虚拟化/image-20230107171508344.jpg)
 >
 > 可以看到此时容器中除了有loopback接口之外，还有一个ifindex(interface index)为13的`veth`设备接口，该设备从eth0指向if14。这里eth0是namespace中为了虚拟化而起的别名。
 >
 > 回到主namespace，执行`ip -d link show`
 >
-> ![image-20230107172025305](Docker网络虚拟化/image-20230107172025305.png)
+> ![image-20230107172025305](Docker网络虚拟化/image-20230107172025305.jpg)
 >
 > 可以看到主namespace下if14正是一条前往if13的veth，并且该接口正属于docker0的bridge。
 
@@ -66,7 +66,7 @@ Docker会将默认的子网172.17.0.0/16应用于docker0，同时对于新产生
 
 > 进入容器后查看ip和路由
 >
-> <img src="Docker网络虚拟化/image-20230107175917501.png" alt="image-20230107175917501" style="zoom:50%;" />
+> <img src="Docker网络虚拟化/image-20230107175917501.jpg" alt="image-20230107175917501" style="zoom:50%;" />
 
 docker0则使用NAT代理所有的内部请求至Docker拥有的与宿主机处于同一网段的single-host的ip，从而实现内外部的通信。
 

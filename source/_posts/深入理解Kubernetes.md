@@ -817,7 +817,7 @@ CRD的创建这部分书上代码不全且版本落后，具体例子可参考[s
 
 #### API编程范式的具体原理
 
-![](深入理解Kubernetes/8ea3266543164081af35dc4061d65cca.png)
+![](深入理解Kubernetes/8ea3266543164081af35dc4061d65cca.jpg)
 
 控制器通过`Informer`获取它关心的对象。`Informer`通过`Reflector`包与APIServer建立链接，获取并监听对象的(增量)变化【例如增减对象就是通过Indexer控制的】，将其放入队列中。同时也不断从队列中读取对象【通过go routine建立若干个无限循环的协程】，根据增量类型**修改informer的缓存**，调用对应handler【使用neutron去修改真正的集群内容】。
 
@@ -1006,7 +1006,7 @@ LocalPV(本地的持久化存储)的难点
 
 CSI的原理：
 
-<img src="深入理解Kubernetes/image-20230209140836991.png" alt="image-20230209140836991" style="zoom: 25%;" />
+<img src="深入理解Kubernetes/image-20230209140836991.jpg" alt="image-20230209140836991" style="zoom: 75%;" />
 
 - `Driver Registar`将插件注册到kubelet中，它需要请求`CSI Identity`的信息
 - `External Provisioner`负责provision，它监听PVC对象的创建，并调用`CSI Controller`的CreateVolume方法创建PV
@@ -1156,7 +1156,7 @@ spec:
 
 NetworkPolicy通过iptables规则来实现隔离，而iptables实际上操作的是Linux的Netfilter
 
-![img](深入理解Kubernetes/netfilter.png)
+![img](深入理解Kubernetes/netfilter.jpg)
 
 #### 找到容器不容易：Service、DNS与服务发现
 
