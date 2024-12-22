@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba CloudIntroduction弹性存储系统(EBS, Elastic Block Storage)要求高可用高速度，并且不同的而硬件配置也使得传统网络协议无法很好地适配。 LUNA：取代内核TCP栈以协调HDD(硬盘)和SSD(固态硬">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From Luna to Solar">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba CloudIntroduction弹性存储系统(EBS, Elastic Block Storage)要求高可用高速度，并且不同的而硬件配置也使得传统网络协议无法很好地适配。 LUNA：取代内核TCP栈以协调HDD(硬盘)和SSD(固态硬">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7gai54rtwj30x10q2qgt.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7gbqldq72j30ym0l7ngu.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7hec5ne76j30sc0j311t.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7hk4ofb4qj30o90eoq8u.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/v2-1fd0111829fd904e04ddbf06b121d7b6_1440w.webp">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/v2-2bc95f9f013e34e0c02c80832a006a72_1440w.webp">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k3cdgmowj30yq0ed7cf.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k3mzdf9ij310p08qgsj.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k60hjlgkj30qo0o6k4f.jpg">
+<meta property="article:published_time" content="2022-10-24T04:00:22.000Z">
+<meta property="article:modified_time" content="2022-11-30T08:26:00.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="Network">
+<meta property="article:tag" content="SIGCOMM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7gai54rtwj30x10q2qgt.jpg">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/","path":"2022/10/24/From-Luna-to-Solar/","title":"From Luna to Solar"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>From Luna to Solar | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#From-Luna-to-Solar-The-Evolutions-of-the-Compute-to-Storage-Networks-in-Alibaba-Cloud"><span class="nav-number">1.</span> <span class="nav-text">From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba Cloud</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Background"><span class="nav-number">3.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LUNA"><span class="nav-number">4.</span> <span class="nav-text">LUNA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SOLAR"><span class="nav-number">5.</span> <span class="nav-text">SOLAR</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2022/10/24/From-Luna-to-Solar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="From Luna to Solar | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          From Luna to Solar
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-10-24 12:00:22" itemprop="dateCreated datePublished" datetime="2022-10-24T12:00:22+08:00">2022-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-11-30 16:26:00" itemprop="dateModified" datetime="2022-11-30T16:26:00+08:00">2022-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">论文阅读</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="From-Luna-to-Solar-The-Evolutions-of-the-Compute-to-Storage-Networks-in-Alibaba-Cloud"><a href="#From-Luna-to-Solar-The-Evolutions-of-the-Compute-to-Storage-Networks-in-Alibaba-Cloud" class="headerlink" title="From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba Cloud"></a>From Luna to Solar: The Evolutions of the Compute-to-Storage Networks in Alibaba Cloud</h3><h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>弹性存储系统(EBS, Elastic Block Storage)要求高可用高速度，并且不同的而硬件配置也使得传统网络协议无法很好地适配。</p>
+<p>LUNA：取代内核TCP栈以协调HDD(硬盘)和SSD(固态硬盘)的速度。在计算和存储集群之间的网络使用<strong>用户空间的TCP</strong>而不是硬件来提高scalability和interoperability。最终发现在性能上有很好的提高。</p>
+<p>SOLAR：在LUNA的经验上，使用<strong>UDP协议栈</strong>实现网络化存储，同时辅之以<strong>硬件加速</strong>和<strong>快速错误恢复</strong>。由于网络协议倾向于提供统一的处理方式，而存储硬件的分层结构又带来末端的复杂性，因此SOLAR的主要创新点就在于<strong>打破了网络和存储层的边界，将网络包和存储块糅合在一起</strong>。</p>
+<ul>
+<li>EBS的数据路径被完全转移到网络部分，独立硬件可以处理而无需牵扯CPU和内存</li>
+<li>数据块并不需要网络数据报那样要求到达顺序，因此无需维护接受缓冲等</li>
+<li>轻量级错误检测</li>
+<li>多路错误恢复(并没有建立TCP那样的端到端连接，错误恢复不影响scalability)</li>
+</ul>
+<h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><style>.buxmojulhhms{zoom:50%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7gai54rtwj30x10q2qgt.jpg" class="buxmojulhhms" alt="image.png">
+
+<p>传统EBS网络构造如上图所示，存储服务器和计算服务器的区分使得总体性能高于全部使用通用服务器，另外存储服务器本身也能够被精细化设计从而保证数据安全和效率。本文主要关注Frontend Network(串联同一地区各个集群的前端网络)【Backend Network通常是PoD(point of deliverly)的结构】</p>
+<p>Storage Agent(SA)主要维护两个表单：</p>
+<ul>
+<li>Segment Table：虚拟磁盘到物理磁盘数据段的映射</li>
+<li>QoS(quality of service) Table：维护各个虚拟磁盘服务等级和当前使用情况(带宽，IOPS每秒读写次数等)</li>
+</ul>
+<style>.ocrxkdmxqhpv{zoom: 67%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7gbqldq72j30ym0l7ngu.jpg" class="ocrxkdmxqhpv" alt="image.png">
+
+<blockquote>
+<p>为什么中间要加一个Block&#x2F;Chunk Server而不是用一些协议进行RDMA(Remote Direct Memory Access)？</p>
+<ul>
+<li>直接操作磁盘带来的LSM-Tree上的合并等操作与计算专用服务器CPU性能不匹配</li>
+<li>多个VM操作多个VD带来的一致性问题</li>
+<li>灵活性、粒度……</li>
+</ul>
+</blockquote>
+<style>.tdteefqsywcl{zoom:50%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7hec5ne76j30sc0j311t.jpg" class="tdteefqsywcl" alt="image.png">
+
+<p>图中是I&#x2F;O延迟的对比图，可以看到，在使用SSD时，Kernel TCP造成的延迟逐渐成为性能瓶颈(原来用的HDD可能速度更慢)，FN&#x2F;BN&#x2F;SA都需要去匹配SSD的高速。</p>
+<blockquote>
+<p>这里写速度比读速度快很多的原因是SSD有write cache</p>
+</blockquote>
+<h3 id="LUNA"><a href="#LUNA" class="headerlink" title="LUNA"></a>LUNA</h3><p>FN往往连接成百上千的计算节点，同时各个节点的设计往往不太一样，因此对scalability和interoperability有较高的要求。而对BN来说，小集群内硬件的配置大多相同，同时为了控制宕机的影响范围，集群内连接数也不会太多。</p>
+<p>2019年开始LUNA被部署到几乎所有阿里云平台</p>
+<style>.hjxgynvstobl{zoom: 67%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjly1h7hk4ofb4qj30o90eoq8u.jpg" class="hjxgynvstobl" alt="image.png">
+
+<p>LUNA的亮点：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-jeong.pdf">NSDI’14 mTCP: a Highly Scalable User-level TCP Stack for Multicore Systems</a>，提供Run-to-Complete实现网络传输的零拷贝</p>
+<style>.fofcvlheipor{zoom: 80%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/v2-1fd0111829fd904e04ddbf06b121d7b6_1440w.webp" class="fofcvlheipor">
+
+<style>.hpjmlnsyrdnn{zoom:80%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/v2-2bc95f9f013e34e0c02c80832a006a72_1440w.webp" class="hpjmlnsyrdnn">
+
+<ul>
+<li>读取NIC(网络接口控制器)的数据包由事件驱动而不是轮询，批处理读取</li>
+<li>TCP放到用户态，减少系统调用</li>
+<li>应用线程和mTCP线程共享buffer【是否是RTC……】</li>
+</ul>
+</blockquote>
+<p>架构类似mTCP，有如下两个拓展</p>
+<ul>
+<li>通过回收和缓存共享来实现SA到RPC的零拷贝</li>
+<li>lock-free和sharing nothing的线程部署理念，CPU核之间不存在共享和锁，提高并行度</li>
+</ul>
+<p>使用LUNA以后：</p>
+<ul>
+<li>SA逐渐转变成性能瓶颈</li>
+<li>随着网络带宽的进一步提高，将网络栈交由硬件处理变得更加必要</li>
+<li>错误恢复的时间(通常几秒到几分钟)让人难以接受</li>
+</ul>
+<h3 id="SOLAR"><a href="#SOLAR" class="headerlink" title="SOLAR"></a>SOLAR</h3><p>bare-metal：将整机提供给客户(可以自行建立多个虚拟机)，而非将虚拟机提供给客户</p>
+<p>bare-metal cloud：将云基础设施移交到硬件</p>
+<style>.pqrgjlttqxfk{zoom:67%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k3cdgmowj30yq0ed7cf.jpg" class="pqrgjlttqxfk" alt="image.png">
+
+<p>可以看到，DPU(Data Processing Unit)提供CPU(6核以限制能耗)、内存、虚拟化、可编程部件(FPGA&#x2F;ASIC)以及通过PCIe(外围组件互连快件)进行直接内存访问</p>
+<img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k3mzdf9ij310p08qgsj.jpg" class="" title="image.png">
+
+<p>LUNA的网络栈和SA都在CPU里，CPU的开销很大。即便使用RDMA将数据访问offload到硬件，SA依然占用了CPU。另外，LUNA还需要经过两次PCIe接口，因此也会被PCIe拖慢一部分性能</p>
+<p>SOLAR的设计理念</p>
+<ul>
+<li>通过将网络栈和SAoffload到硬件上，减少CPU开销，避免PCIe</li>
+<li>能够检测和通过动态更换路径避免网络不可用</li>
+</ul>
+<p>one-block-one-packet</p>
+<ul>
+<li>更小的buffer【不用考虑失序到达了】</li>
+<li>CPU和内存使用大大降低</li>
+<li>更少的状态</li>
+<li>很容易实现</li>
+</ul>
+<style>.bzpkjfyshwpg{zoom:67%;}</style><img src="/Blog/2022/10/24/From-Luna-to-Solar/006g42Mjgy1h7k60hjlgkj30qo0o6k4f.jpg" class="bzpkjfyshwpg" alt="image.png">
+
+<ul>
+<li>写操作过程：QoS获取服务信息，Block获取物理地址，CPU轮询以发起RPC请求，将UDP、RPC报文头生成好。同时与数据合并发出网络包。【CPU在生成RPC头的同时也准备好拥塞反馈的环境等】</li>
+<li>读操作过程：与写操作不一样的地方在于，RPC读请求由cpu发出，同时维护一个接受表，等待FGPA处理之后的响应。<ul>
+<li>CRC的聚合和检测由cpu完成，(FPGA的比特翻转问题难以保证正确性，因此只为每个小段进行CRC计算)。利用了CRC32的递归特性CRC(A^B)&#x3D;CRC(A)^CRC(B)。</li>
+</ul>
+</li>
+</ul>
+<p>SOLAR的经验</p>
+<ul>
+<li>从PCIe3.0到PCIE4.0花了十年，但是网络速度却从10Gbps涨到了100Gbps，因此在未来跳过PCIe仍将是重要的</li>
+<li>将巨型帧的大小从8k降到4k以缓解拥塞，以及使用per-packet ACK来进行拥塞控制</li>
+<li>将弹性存储系统整合进DPU对于边缘网络等有bare-metal cloud的情况依然能起到一定作用</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/Network/" rel="tag"># Network</a>
+              <a href="/Blog/tags/SIGCOMM/" rel="tag"># SIGCOMM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2022/10/23/cpp-easygraph%E6%96%87%E6%A1%A3/" rel="prev" title="cpp_easygraph文档">
+                  <i class="fa fa-chevron-left"></i> cpp_easygraph文档
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2022/11/24/Linux%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F/" rel="next" title="Linux权限系统">
+                  Linux权限系统 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

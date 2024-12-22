@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="Contextual Dispatch for Function SpecializationOOPSLA’20 JIT对函数的优化策略是根据上下文来决定的，以R为例  需要在函数调用之前编译器插入类型检查代码 运行时如果发现参数类型变了就trigger recompiling 根据最近的调用删除一些参数的类型检查(如果用不到)以加速">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024-1-11讨论班">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2024/01/11/2024-1-11%E8%AE%A8%E8%AE%BA%E7%8F%AD/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="Contextual Dispatch for Function SpecializationOOPSLA’20 JIT对函数的优化策略是根据上下文来决定的，以R为例  需要在函数调用之前编译器插入类型检查代码 运行时如果发现参数类型变了就trigger recompiling 根据最近的调用删除一些参数的类型检查(如果用不到)以加速">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-11T11:02:38.000Z">
+<meta property="article:modified_time" content="2024-01-28T13:29:56.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="OOPSLA">
+<meta property="article:tag" content="S&amp;P">
+<meta property="article:tag" content="Wasm">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2024/01/11/2024-1-11%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2024/01/11/2024-1-11%E8%AE%A8%E8%AE%BA%E7%8F%AD/","path":"2024/01/11/2024-1-11讨论班/","title":"2024-1-11讨论班"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2024-1-11讨论班 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Contextual-Dispatch-for-Function-Specialization"><span class="nav-number">1.</span> <span class="nav-text">Contextual Dispatch for Function Specialization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WaVe-a-verifiably-secure-WebAssembly-sandboxing-runtime"><span class="nav-number">2.</span> <span class="nav-text">WaVe: a verifiably secure WebAssembly sandboxing runtime</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2024/01/11/2024-1-11%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2024-1-11讨论班 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2024-1-11讨论班
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-01-11 19:02:38" itemprop="dateCreated datePublished" datetime="2024-01-11T19:02:38+08:00">2024-01-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-01-28 21:29:56" itemprop="dateModified" datetime="2024-01-28T21:29:56+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E7%BB%84%E4%BC%9A%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">组会记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="Contextual-Dispatch-for-Function-Specialization"><a href="#Contextual-Dispatch-for-Function-Specialization" class="headerlink" title="Contextual Dispatch for Function Specialization"></a>Contextual Dispatch for Function Specialization</h4><p>OOPSLA’20</p>
+<p>JIT对函数的优化策略是根据上下文来决定的，以R为例</p>
+<ul>
+<li>需要在函数调用之前编译器插入类型检查代码</li>
+<li>运行时如果发现参数类型变了就trigger recompiling</li>
+<li>根据最近的调用删除一些参数的类型检查(如果用不到)以加速</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>综合多次调用可能不是最优的优化</li>
+<li>deoptimize&#x2F;recompile的过程比较花时间</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li>空间换时间，记录context-&gt;code version表，call函数需要查表</li>
+<li>Context记录什么信息……</li>
+<li>对Context的可能值建立偏序(因为同一个context可能有多个次优化版本)关系，每次从表里找到&gt;&#x3D;当前ctx的最小的ctx’。若ctx’大于ctx，取ctx’的子节点，取其优化规则的并集重新编译然后插进来，若满了就随机逐出一个</li>
+</ul>
+<p>Comment：</p>
+<ul>
+<li>没说内存占用</li>
+<li>我感觉这个工作有点捞</li>
+</ul>
+<h4 id="WaVe-a-verifiably-secure-WebAssembly-sandboxing-runtime"><a href="#WaVe-a-verifiably-secure-WebAssembly-sandboxing-runtime" class="headerlink" title="WaVe: a verifiably secure WebAssembly sandboxing runtime"></a>WaVe: a verifiably secure WebAssembly sandboxing runtime</h4><p>S&amp;P’23</p>
+<p>主要讨论wasm的安全性</p>
+<p>内存隔离：每个程序都有一块独立的区域</p>
+<ul>
+<li>总内存12G，规范要求从4G地址开始，总可用空间不超过4G，前后至少8G是guard page(可能motivated by±int32)</li>
+</ul>
+<p>WebAssembly System Interface(WASI)的挑战：</p>
+<ul>
+<li>缺乏完备的WASI规范</li>
+<li>需要保证资源隔离<ul>
+<li>内存隔离</li>
+<li>文件系统隔离</li>
+<li>网络隔离(说constraint更适合一定)</li>
+</ul>
+</li>
+</ul>
+<p>例如对于一个删除文件夹的API</p>
+<ul>
+<li>需要验证path字符串的地址是否在合法内存内</li>
+<li>需要验证路径是否在根目录内</li>
+<li>调用POSIX中的对应函数</li>
+</ul>
+<p>WaVe：一个可验证WASI安全的Wasm Runtime</p>
+<p>静态扫描WASI(实验用的是他们自己实现的)函数中的Effect，包括</p>
+<ul>
+<li>内存操作&#x2F;文件操作&#x2F;网络操作(共7种)</li>
+<li>对每种Effect有检验规则，静态检查</li>
+</ul>
+<p>Evaluation：</p>
+<ul>
+<li>通过Fuzz验证正确性<ul>
+<li>AFL</li>
+<li>通过QuickCheck验证pre-post-condition</li>
+<li>随机生成syscall差分测试</li>
+</ul>
+</li>
+<li>和wasmtime比较运行时性能【非静态检查的性能，没啥意义的测试】</li>
+</ul>
+<p>Contribution主要在于给出了一个WASI实现的标准&#x2F;流程，可以仿照他们的工作做个验证器，然后给定验证条件来实现需要的API</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/OOPSLA/" rel="tag"># OOPSLA</a>
+              <a href="/Blog/tags/S-P/" rel="tag"># S&P</a>
+              <a href="/Blog/tags/Wasm/" rel="tag"># Wasm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2024/01/05/%E9%9D%A2%E5%90%91%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E7%9A%84%E6%96%B0%E5%9E%8B%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%99%BA%E7%AE%97%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB/" rel="prev" title="面向大模型训练的新型数据中心智算网络体系">
+                  <i class="fa fa-chevron-left"></i> 面向大模型训练的新型数据中心智算网络体系
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2024/02/19/%E5%9B%9E%E9%A1%BE2023/" rel="next" title="回顾2023">
+                  回顾2023 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

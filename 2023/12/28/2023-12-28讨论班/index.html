@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="Do Users Write More Insecure Code with AI Assistants? CCS23Empirical Study，心理学  AI assistant是否会写更多unsafe code——会，因为AI模型训练数据很多就unsafe 用户是否信任？——用户会信任这些代码 如何构造prompt和迭代prompt  做对照实验，5道算法题找人做，有&#x2F;无AI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023-12-28讨论班">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="Do Users Write More Insecure Code with AI Assistants? CCS23Empirical Study，心理学  AI assistant是否会写更多unsafe code——会，因为AI模型训练数据很多就unsafe 用户是否信任？——用户会信任这些代码 如何构造prompt和迭代prompt  做对照实验，5道算法题找人做，有&#x2F;无AI">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E8%B0%83%E6%9F%A5%E6%96%B9%E6%B3%95.jpg">
+<meta property="article:published_time" content="2023-12-28T10:43:45.000Z">
+<meta property="article:modified_time" content="2023-12-28T12:09:33.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="CCS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E8%B0%83%E6%9F%A5%E6%96%B9%E6%B3%95.jpg">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/","path":"2023/12/28/2023-12-28讨论班/","title":"2023-12-28讨论班"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2023-12-28讨论班 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Do-Users-Write-More-Insecure-Code-with-AI-Assistants-CCS23"><span class="nav-number">1.</span> <span class="nav-text">Do Users Write More Insecure Code with AI Assistants? CCS23</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AppAgent-Multimodal-Agents-as-Smartphone-Users-arXiv-2023"><span class="nav-number">2.</span> <span class="nav-text">AppAgent: Multimodal Agents as Smartphone Users. arXiv 2023</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2023-12-28讨论班 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2023-12-28讨论班
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-12-28 18:43:45 / Modified: 20:09:33" itemprop="dateCreated datePublished" datetime="2023-12-28T18:43:45+08:00">2023-12-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E7%BB%84%E4%BC%9A%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">组会记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="Do-Users-Write-More-Insecure-Code-with-AI-Assistants-CCS23"><a href="#Do-Users-Write-More-Insecure-Code-with-AI-Assistants-CCS23" class="headerlink" title="Do Users Write More Insecure Code with AI Assistants? CCS23"></a><strong>Do Users Write More Insecure Code with AI Assistants?</strong> CCS23</h4><p>Empirical Study，心理学</p>
+<ul>
+<li>AI assistant是否会写更多unsafe code——会，因为AI模型训练数据很多就unsafe</li>
+<li>用户是否信任？——用户会信任这些代码</li>
+<li>如何构造prompt和迭代prompt</li>
+</ul>
+<p>做对照实验，5道算法题找人做，有&#x2F;无AI</p>
+<p>统计上显著性检验要求的solid的被试数：问题数*10</p>
+<p>分层：相同性质的一层，逐层采</p>
+<p>雪球：先找到一个，然后从这个为抓手顺着这个找其他相同性质的</p>
+<p>组内设计：同一个组的人在不同的条件下做同一套测试(但是可以加入随机)</p>
+<img src="/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E8%B0%83%E6%9F%A5%E6%96%B9%E6%B3%95.jpg" class="" title="调查方法">
+
+<h4 id="AppAgent-Multimodal-Agents-as-Smartphone-Users-arXiv-2023"><a href="#AppAgent-Multimodal-Agents-as-Smartphone-Users-arXiv-2023" class="headerlink" title="AppAgent: Multimodal Agents as Smartphone Users. arXiv 2023"></a>AppAgent: Multimodal Agents as Smartphone Users. arXiv 2023</h4><p>大模型的Agent能做的事有限，理解能力不够</p>
+<p>基于DOM tree标注页面可以点击的元素，一一标号</p>
+<p>用户操作&#x2F;解释给Agent，然后它存储下来</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/CCS/" rel="tag"># CCS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="prev" title="2023-12-21讨论班">
+                  <i class="fa fa-chevron-left"></i> 2023-12-21讨论班
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2024/01/05/%E9%9D%A2%E5%90%91%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E7%9A%84%E6%96%B0%E5%9E%8B%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%99%BA%E7%AE%97%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB/" rel="next" title="面向大模型训练的新型数据中心智算网络体系">
+                  面向大模型训练的新型数据中心智算网络体系 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

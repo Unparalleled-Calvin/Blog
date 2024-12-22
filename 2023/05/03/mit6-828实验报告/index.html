@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="实验环境 Virtual Box 6.1 Ubuntu 22.04 MIT6.828 2022  Lab1：Xv6 and Unix utilities文档链接：Lab: Xv6 and Unix utilities (mit.edu)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mit6.828实验报告">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="实验环境 Virtual Box 6.1 Ubuntu 22.04 MIT6.828 2022  Lab1：Xv6 and Unix utilities文档链接：Lab: Xv6 and Unix utilities (mit.edu)">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/xv6%E5%86%85%E6%A0%B8%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E4%B8%8E%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/xv6%E7%94%A8%E6%88%B7%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E4%B8%8E%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2023-05-03T10:22:40.000Z">
+<meta property="article:modified_time" content="2023-09-02T02:21:44.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="Xv6">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="Mit">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/xv6%E5%86%85%E6%A0%B8%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E4%B8%8E%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/","path":"2023/05/03/mit6-828实验报告/","title":"mit6.828实验报告"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mit6.828实验报告 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lab1%EF%BC%9AXv6-and-Unix-utilities"><span class="nav-number">2.</span> <span class="nav-text">Lab1：Xv6 and Unix utilities</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sleep"><span class="nav-number">2.1.</span> <span class="nav-text">sleep</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pingpong"><span class="nav-number">2.2.</span> <span class="nav-text">pingpong</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#primes"><span class="nav-number">2.3.</span> <span class="nav-text">primes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#find"><span class="nav-number">2.4.</span> <span class="nav-text">find</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xargs"><span class="nav-number">2.5.</span> <span class="nav-text">xargs</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lab2%EF%BC%9Asystem-calls"><span class="nav-number">3.</span> <span class="nav-text">Lab2：system calls</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Using-gdb"><span class="nav-number">3.1.</span> <span class="nav-text">Using gdb</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#System-call-tracing"><span class="nav-number">3.2.</span> <span class="nav-text">System call tracing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sysinfo"><span class="nav-number">3.3.</span> <span class="nav-text">Sysinfo</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lab3%EF%BC%9Apage-tables"><span class="nav-number">4.</span> <span class="nav-text">Lab3：page tables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Speed-up-system-calls"><span class="nav-number">4.1.</span> <span class="nav-text">Speed up system calls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Print-a-page-table"><span class="nav-number">4.2.</span> <span class="nav-text">Print a page table</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Detect-which-pages-have-been-accessed"><span class="nav-number">4.3.</span> <span class="nav-text">Detect which pages have been accessed</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lab-4%EF%BC%9ATraps"><span class="nav-number">5.</span> <span class="nav-text">Lab 4：Traps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RISC-V-assembly"><span class="nav-number">5.1.</span> <span class="nav-text">RISC-V assembly</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Backtrace"><span class="nav-number">5.2.</span> <span class="nav-text">Backtrace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Alarm"><span class="nav-number">5.3.</span> <span class="nav-text">Alarm</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lab-Copy-on-Write-Fork-for-xv6"><span class="nav-number">6.</span> <span class="nav-text">Lab: Copy-on-Write Fork for xv6</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mit6.828实验报告 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mit6.828实验报告
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-05-03 18:22:40" itemprop="dateCreated datePublished" datetime="2023-05-03T18:22:40+08:00">2023-05-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-09-02 10:21:44" itemprop="dateModified" datetime="2023-09-02T10:21:44+08:00">2023-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E6%8A%80%E6%9C%AF%E8%A7%86%E9%87%8E/" itemprop="url" rel="index"><span itemprop="name">技术视野</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h3><ul>
+<li>Virtual Box 6.1</li>
+<li>Ubuntu 22.04</li>
+<li>MIT6.828 2022</li>
+</ul>
+<h3 id="Lab1：Xv6-and-Unix-utilities"><a href="#Lab1：Xv6-and-Unix-utilities" class="headerlink" title="Lab1：Xv6 and Unix utilities"></a>Lab1：Xv6 and Unix utilities</h3><p>文档链接：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.828/2022/labs/util.html">Lab: Xv6 and Unix utilities (mit.edu)</a></p>
+<h4 id="sleep"><a href="#sleep" class="headerlink" title="sleep"></a>sleep</h4><p>本练习要求读完xv6第一章</p>
+<blockquote>
+<ul>
+<li><p>为什么要用fork+exec而不是将二者合并？</p>
+<p>这样做提供了一个重定向文件描述符而不扰乱原进程的机会。fork和exec都不会修改文件描述符表，如果做成原子化的，那么若要修改子进程的fd，势必需要在原进程做修改和还原。</p>
+<p>例如在shell中执行cat &lt; in.txt时，先fork，然后解析cmd，然后输入重定向，然后exec</p>
+</li>
+<li><p>Pipe的好处？</p>
+<ul>
+<li>自清理</li>
+</ul>
+</li>
+<li><p>任意长内容传输</p>
+</li>
+<li><p>两个进程并发执行</p>
+</li>
+</ul>
+</blockquote>
+<p>按照提示写就行，这里的sleep是系统调用，具体的调用原理我暂时还不清楚，应该是一个生成好的入口直接渠道kernel的sleep了</p>
+<h4 id="pingpong"><a href="#pingpong" class="headerlink" title="pingpong"></a>pingpong</h4><p>参考xv6书中给出的pipe使用样例</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> fd<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token function">pipe</span><span class="token punctuation">(</span>fd<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//fd[0]用于read，fd[1]用于write</span></code></pre>
+
+<p>我在parent里写了一个wait(&amp;pid)，防止出现对管道的争用</p>
+<p>然后按照描述parent先写然后等待子进程结束，子进程先读后写最后退出，然后parent读取后退出</p>
+<h4 id="primes"><a href="#primes" class="headerlink" title="primes"></a>primes</h4><p>这道题难度稍微有点高，具体要做的在<a target="_blank" rel="noopener" href="http://swtch.com/~rsc/thread/">this page</a>中已经给出。简单来说需要主进程往管道里塞2~…的数字，之后每个子进程读取并打印第一个数a，建立一个管道，然后派生出一个和自己操作相同的子进程。前一个子进程将能够整除a的数字筛掉，并将剩余数字写到管道中交由后一个子进程处理。</p>
+<p>当管道的写端被关闭时，进程read的返回值是0，我在这里卡了一段时间。</p>
+<p>这是出错的代码：</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span>pid <span class="token operator">=</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">prime</span><span class="token punctuation">(</span>fd_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">while</span><span class="token punctuation">(</span><span class="token function">read</span><span class="token punctuation">(</span>fd<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>temp<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>temp <span class="token operator">%</span> num <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token function">write</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>temp<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token function">close</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">wait</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>pid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">close</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>这里我错误地认为父进程单方面close父子进程就不会再有东西打开文件，但是实际上fork时子进程也会继承父进程的文件描述符表，所以要父子进程都关掉fd[1]，子进程read的返回值才会是0。</p>
+<p>正确写法如下：</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span>pid <span class="token operator">=</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">close</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">prime</span><span class="token punctuation">(</span>fd_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span><span class="token punctuation">&#123;</span>
+    <span class="token function">close</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">while</span><span class="token punctuation">(</span><span class="token function">read</span><span class="token punctuation">(</span>fd<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>temp<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>temp <span class="token operator">%</span> num <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token function">write</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>temp<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token function">close</span><span class="token punctuation">(</span>fd_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">wait</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>pid<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>另外本体递归和fork的概念也容易把人搞迷糊，用return还是exit，这都是需要考虑的问题。</p>
+<h4 id="find"><a href="#find" class="headerlink" title="find"></a>find</h4><p>本题可以参考ls的写法，了解怎么遍历文件夹以及判断文件类型，然后用递归写就可以了。</p>
+<h4 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h4><p>实现方式不难，while循环里用gets读入一行，如果发现长度为0那么就break，否则手动从buf中找出arg们，然后调用fork以及exec。这里xargs的argv[1]是命令名，到新的argv中要挪到argv[0]去，后面的刚好依次前移。</p>
+<style>.lovboojwcvrs{zoom: 50%;}</style>
+
+<h3 id="Lab2：system-calls"><a href="#Lab2：system-calls" class="headerlink" title="Lab2：system calls"></a>Lab2：system calls</h3><p>文档链接：</p>
+<p>本次lab要求读完xv6第二章</p>
+<blockquote>
+<ul>
+<li>RISCV拥有三种模式：<code>machine mode</code>, <code>supervisor mode</code>和<code>user mode</code>，CPU从machine mode开始，执行一些命令后转到supervisor mode，在该mode下，我们称系统运行在内核态。RISCV提供<code>ecall</code>指令使代码进入supervisor mode，然后对syscall指令进行检查</li>
+</ul>
+</blockquote>
+<h4 id="Using-gdb"><a href="#Using-gdb" class="headerlink" title="Using gdb"></a>Using gdb</h4><p>make qemu-gdb后会在项目根目录下生成<code>.gdbinit</code>文件，lab文档要求重新开一个窗口运行gdb。实测可用的命令为：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">gdb-multiarch <span class="token parameter variable">-iex</span> <span class="token string">"set auto-load safe-path /"</span></code></pre>
+
+<p><code>gdb-multiarch</code>用于支持<code>.gdbinit</code>中的riscv架构，<code>auto-load</code>用于让gdb自动加载根目录下的<code>.gdbinit</code>文件</p>
+<p>可以使用如下命令使以后只需要使用safegdb即可</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">cat</span> <span class="token operator">>></span> ~/.bashrc
+<span class="token builtin class-name">alias</span> <span class="token assign-left variable">safegdb</span><span class="token operator">=</span><span class="token string">"gdb-multiarch -iex <span class="token entity" title="\&quot;">\"</span>set auto-load safe-path /<span class="token entity" title="\&quot;">\"</span>"</span></code></pre>
+
+<blockquote>
+<p> gdb的layout src指令会使终端会一分为二，可以使用Ctrl+X, A来关闭layout</p>
+</blockquote>
+<p>xv6执行流程：</p>
+<ul>
+<li>系统启动后以<code>machine mode</code>执行<code>kernel/entry.S</code>，它设定一些特权寄存器后调用<code>kernel/start.c</code>的<code>start</code>函数。</li>
+<li><code>start</code>函数设定好<code>mstatus</code>以及<code>mepc</code>两个寄存器以后开启中断等，然后使用<code>mret</code>指令读取前述两个集群器的值，进入<code>supervisor mode</code>以及调用<code>kernel/main.c</code>的<code>main</code>函数。</li>
+<li><code>main</code>函数初始化好一系列东西以后调用<code>kernel/proc.c</code>的<code>scheduler</code>函数，进行进程调度。第一个用户态进程是<code>user/initcode.S</code>，它由前述过程中调用的<code>kernel/proc.c</code>的<code>userinit</code>函数初始化进程相关信息。</li>
+<li><code>initcode.S</code>通过系统调用执行<code>exec(&quot;/init&quot;)</code>，该程序来自于<code>user/init.c</code>，可以打开一个<code>console</code>文件，并fork出一个子进程执行<code>sh</code>命令</li>
+</ul>
+<blockquote>
+<p>syscall的执行流程是用户进程设立好对应的寄存器的值后，使用硬件终端指令进行软中断，CPU发现中断后进行mode的切换以及切换程序栈等，实现从用户态到内核态的转变</p>
+</blockquote>
+<p>Q: Looking at the backtrace output, which function called syscall?<br>A: Function usertrap called function syscall.</p>
+<p>Q: What is the value of p-&gt;trapframe-&gt;a7 and what does that value represent? (Hint: look user&#x2F;initcode.S, the first user program xv6 starts.)<br>A: The value of p-&gt;trapframe-&gt;a7 is 7. <code>li a7, SYS_exec</code> in user&#x2F;initcode.S moves SYS_exec whose value is 7 into register a7.</p>
+<p>Q: What was the previous mode that the CPU was in?<br>A: User mode. <code>initcode.S</code> which executes in user mode uses syscall to execute <code>init</code>.</p>
+<p>Q: Write down the assembly instruction the kernel is panicing at. Which register corresponds to the varialable num?<br>A: The instruction is “lw a3,0(zero)”. Varialable num is stored in a3.</p>
+<p>Q: Why does the kernel crash? Hint: look at figure 3-3 in the text; is address 0 mapped in the kernel address space? Is that confirmed by the value in scause above?<br>A: The kernel crashes because it reads the value of an invalid address 0 which is not mapped in the kernel address space. The value scause is 0xd which means a load page fault occurred referring to chapter 4.1.10 of riscv-privileged-v1.10.</p>
+<p>Q: What is the name of the binary that was running when the kernel paniced? What is its process id (pid)?<br>A: The name of the process is “initcode” and its pid is 1.</p>
+<h4 id="System-call-tracing"><a href="#System-call-tracing" class="headerlink" title="System call tracing"></a>System call tracing</h4><p>本题要求实现一个新系统调用trace，它能够规定进程接下来执行哪些系统调用会打印提示信息。</p>
+<p>首先按照文档要求修改相关头文件c文件，添加trace函数。文档在下一步提示将tracemask存储进proc结构体中，称为进程信息的一部分，这一做法实在很巧妙。我原先在想是否需要在内核中使用全局变量+映射表等方式来存储，这样看来完全是没有必要的。因此<code>sys_trace</code>函数做的就是将它的参数存进进程信息中，之后<code>syscall</code>函数就可以根据这个值来判断是否需要打印相关信息。由于结构体的这个值初始化的时候是0，所以不必担心鲁棒性。</p>
+<p>之后在fork时将子进程的tracemask设为和父进程一样就可以通过测试啦，如果<code>trace children</code>那个样例报超时，可以进gradelib.py中把<code>run_qemu_kw</code>的timeout设高一点。</p>
+<h4 id="Sysinfo"><a href="#Sysinfo" class="headerlink" title="Sysinfo"></a>Sysinfo</h4><p>本题要求实现一个新的系统调用sysinfo，该函数需要在参数中的sysinfo结构体中填入空闲的内存数以及系统总进程数。</p>
+<p><code>sys_sysinfo</code>函数具体的准备工作与trace类似，主要的工作在于实现<code>freemem</code>，<code>nproc</code>以及使用<code>copyout</code>。<code>freemem</code>统计系统中所有可用内存，这里在<code>kernel/kalloc.c</code>中可以使用kmem.freelist拿到空闲页的链表，统计空闲页数再乘上每页的大小即可。<code>nproc</code>统计所有状态不为UNUSED的进程数目(UNUSED则是类似进程池的概念，一开始初始化了，但是没有使用)，再<code>kernel/proc.c</code>中遍历proc数组即可。</p>
+<p><code>copyout</code>则用于将数据拷贝到用户态内存，利用<code>myproc</code>函数拿到进程的页表等信息后即可将参数填写完毕。</p>
+<p>最后还要自己加个time.txt，否则差一份满分。</p>
+<style>.hcfaxwisroqm{zoom:50%;}</style>
+
+<p>下面总结一下增加syscall的流程，以<code>xxx</code>为例</p>
+<ul>
+<li><p><code>user/user.h</code>主要用于给用户态进程提供一个可以调用的函数声明<code>xxx()</code>，具体的函数定义在<code>user/usys.pl</code>生成汇编码中(实际上这些函数就是用ecall指令调用kernel中的系统调用函数桩，和系统调用的实现没有关系)</p>
+</li>
+<li><p><code>kernel/syscall.h</code>中定义了不同系统调用的号码<code>SYS_xxx</code>，<code>kernel/syscall.c</code>中则将<code>sys_xxx()</code>放入syscalls数组的对应位置，以及在syscall_names中写入名称xxx</p>
+</li>
+<li><p>然后在以sys开头的c文件中实现<code>sys_xxx()</code>，例如<code>kernel/sysproc.c</code>等</p>
+<blockquote>
+<p>如果想要在其他文件中写一些工具函数，例如<code>kernel/kalloc.c</code>等，可以在<code>kernel/defs.h</code>中写好定义，再到具体的文件中去实现</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Lab3：page-tables"><a href="#Lab3：page-tables" class="headerlink" title="Lab3：page tables"></a>Lab3：page tables</h3><p>文档链接：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.828/2022/labs/pgtbl.html">Lab: page tables (mit.edu)</a></p>
+<p>本次lab要求读完xv6第三章</p>
+<blockquote>
+<p>xv6运行的Sv39RISC-V机器中，有效地址为39位，其中页索引27位，页内偏移12位(每页4096字节)。翻译成物理地址时，只需要将页索引更换为44位的物理索引PPN即可。</p>
+<p>如果不做额外处理，一个进程将拥有2^27^个PTE，实在是过于庞大。因此采用多级页表的方式，将27位每9位分成一段，将2^9^&#x3D;512个PTE，每个PTE占8B(64位)，刚好放进一页。因此，在多级页表中，第一级页表的PTE中PPN存放对应二级页表的页号，之后转到那个物理页查找即可。每个CPU的<code>satp</code>寄存器存放根页表的地址，因此可以同时执行不同程序。</p>
+<table>
+<thead>
+<tr>
+<th>Reserved</th>
+<th>PPN</th>
+<th>RSW</th>
+<th>D</th>
+<th>A</th>
+<th>G</th>
+<th>U</th>
+<th>X</th>
+<th>W</th>
+<th>R</th>
+<th>V</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>11位</td>
+<td>44位</td>
+<td>Reserved</td>
+<td>Dirty</td>
+<td>Accessed</td>
+<td>Global</td>
+<td>User</td>
+<td>Executable</td>
+<td>Writable</td>
+<td>Readable</td>
+<td>Valid</td>
+</tr>
+</tbody></table>
+<p>补充：OS负责维护页表，而查找页表获得真实物理地址的工作实际由MMU硬件完成，因此不用担心权限问题。</p>
+<style>.hblnggubppes{zoom: 50%;}</style><img src="/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/xv6%E5%86%85%E6%A0%B8%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E4%B8%8E%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png" class="hblnggubppes" alt="image-20230720105441496">
+
+<p>xv6内核虚拟地址空间与物理地址空间的关系：</p>
+<ul>
+<li>KERNBASE到PHYSTOP从物理空间直接映射，这部分由内核自身拥有。</li>
+<li>实际上QEMU只提供这部分物理存储</li>
+<li>fork时为子进程分配的空间地址一定在QEMU的物理空间中，也就是在内核视角下一定在这一段，因此内核可以直接使用这个物理地址作为虚拟地址进行内存拷贝等操作</li>
+<li>PHYSTOP之上的虚拟空间存放内核栈等数据，这部分同样映射到实QEMU的物理空间中<ul>
+<li>所以实际上这部分物理空间在内核的虚拟空间被映射了两次</li>
+<li>每一个进程都有一个内核栈，即Kstack..，为了防止溢出产生问题，增加了一个Guard Page，对应PTE_V被设为0</li>
+</ul>
+</li>
+<li>KERNBASE之下的部分虚拟空间也从物理空间直接映射，用于操作IO设备等</li>
+</ul>
+<p>xv6的main函数会初始化内核页表等，此时使用的地址都是物理地址。当这些都完成之后，才会把根页表的地址放到<code>satp</code>寄存器中，那之后才由CPU负责翻译地址。</p>
+<style>.fkhlxtobphfd{zoom: 50%;}</style><img src="/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/xv6%E7%94%A8%E6%88%B7%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E4%B8%8E%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png" class="fkhlxtobphfd" alt="image-20230720180040653">
+
+<p>对于用户虚拟空间来说，可以使用sbrk等系统调用来增加或减少进程实际分配的空间。</p>
+<p>用户进程和内核按理需要两个不同的页表，trampoline正是起这样一个桥接的跳板作用。</p>
+</blockquote>
+<h4 id="Speed-up-system-calls"><a href="#Speed-up-system-calls" class="headerlink" title="Speed up system calls"></a>Speed up system calls</h4><p>本题要求在每个用户进程的虚拟空间中新开辟一个USYSCALL区域，该区域对用户来说只读，提供一些数据以在用户态完成系统调用。测试中使用的<code>ugetpid()</code>，即将进程的pid数据存储在该区域。</p>
+<p>模仿trapframe，先在proc结构体中增加usyscall的指针定义，在<code>allocproc()</code>函数中分配实际的物理页，与此对应在freeproc中也需要释放该页。该页分配完毕后需要安装到页表中，因此在<code>proc_pagetable()</code>函数中模仿trapframe写好usyscall的安装代码。注意，这里PTE的应该为PTE_R和<strong>PTE_U</strong>两个选项设值，前者代表只读，后者代表用户态可访问。</p>
+<h4 id="Print-a-page-table"><a href="#Print-a-page-table" class="headerlink" title="Print a page table"></a>Print a page table</h4><p>本题要求按照指定的格式打印进程的页表，实现起来非常简单，参照<code>freewalk()</code>函数就可以完成遍历多级页表的代码。</p>
+<h4 id="Detect-which-pages-have-been-accessed"><a href="#Detect-which-pages-have-been-accessed" class="headerlink" title="Detect which pages have been accessed"></a>Detect which pages have been accessed</h4><p>本题要求为xv6的PTE增加PTE_A这一选项并实现pgaccess这一新系统调用。pgaccess主要用于从给定的虚拟地址开始查看len个页是否被访问过，并返回一个bitmap。参考xv6 book等得知Access这一位在右起第7个，即(1L &lt;&lt; 6)。然后在<code>kernerl/sysproc.c</code>的<code>sys_pgaccess()</code>不全相关的逻辑代码。由于<code>kernel/vm.c</code>已经提供了<code>walk()</code>函数用来从任意虚拟地址找到对应的PTE，因此该代码写起来非常简单。</p>
+<p>该问题的难点可能在于bitmap的处理，涉及位运算以及大端小端等等比较麻烦，这里简化处理让len不超过32位，用int存储mask。若len不足32位则左移mask。</p>
+<style>.gfgbbdgiwfon{zoom:50%;}</style>
+
+<h3 id="Lab-4：Traps"><a href="#Lab-4：Traps" class="headerlink" title="Lab 4：Traps"></a>Lab 4：Traps</h3><p>文档链接：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.828/2022/labs/traps.html">Lab: Traps (mit.edu)</a></p>
+<p>本次lab要求读完xv6第四章</p>
+<blockquote>
+<p>RISCV中与陷入有关的寄存器：</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>stvec</code></td>
+<td>trap vector，存放trap handler的地址</td>
+</tr>
+<tr>
+<td><code>sepc</code></td>
+<td>error pc，存放PC，之后sret会将值拷贝进PC寄存器</td>
+</tr>
+<tr>
+<td><code>scause</code></td>
+<td>cause，存放trap的原因(错误码)</td>
+</tr>
+<tr>
+<td><code>sscratch</code></td>
+<td>临时存放某寄存器的值，然后这个寄存器可以存放trapframe的基址(虽然在用户态是固定值，但是机器码中使用了这种寻址方式)以先存储其他31个寄存器</td>
+</tr>
+<tr>
+<td><code>sstatus</code></td>
+<td>机器状态，SIE位规定是否打开中断、SPP位表明trap来自于什么模式以及要回到什么模式</td>
+</tr>
+</tbody></table>
+<p>操作系统要做的事情：</p>
+<ul>
+<li>如果是设备中断+关中断状态，直接忽略以下步骤</li>
+<li>关闭中断</li>
+<li>设置sepc为当前pc</li>
+<li>将当前mode保存进SPP位</li>
+<li>设置scause位trap的原因</li>
+<li>设置mode为supervisor</li>
+<li>将stvec拷贝到pc中</li>
+</ul>
+<p>用户在进行syscall、错误行为、设备中断等情况下会出现trap，完整路径是uservec-&gt;usertrap-&gt;usertrapret-&gt;userret</p>
+<p>由于RISCV在trap时不提供页表切换，因此需要在用户态也提供handler程序地址的页表，这也是为什么上面地址空间图中用户进程都有trampoline页。trampoline页的PTE_U位是0，即只允许在内核态执行跳板代码，进行寄存器保存、页表更换等。uservec(<code>kernel/trampoline.S</code>)首先将a0保存到sscratch，然后就可以利用a0存放trapframe的值，用于机器指令将31个寄存器保存到进程的trapframe内存处(用户态下在trampoline下面一页)，内核态可以通过进程结构体查看具体trapframe地址。然后再随便用一个寄存器放基址，把sscratch中临时存放的值放到trapframe对应a0的地方去。</p>
+<p>usertrap(<code>kernel/trap.c</code>)则对trap做一个初步的处理，首先将stvec的改为kerneltrap的地址，以处理在内核态产生的trap，然后根据scause执行不同的逻辑。</p>
+<p>而usertrapret(<code>kernel/trap.c</code>)则是异常处理完毕后的收尾工作，例如将stvec仍改为usertrap等。</p>
+<p>最后调用userret(<code>kernel/trampoline.S</code>)，同样可以从内核态刀用户态连贯执行，它更改了<code>satp</code>指向的页表，以及恢复32个寄存器的值，通过sret回到用户态。</p>
+<p>内核在执行syscall的时候，读写原来的寄存器通过trapframe操作内存部分就好。</p>
+<p>如果内核内存能够在每个进程页表内都有映射，那么也可以不拥有trampoline和trapframe这么复杂的机制，但是那样可能会带来bug和安全问题</p>
+<p>kernelvec则将32个寄存器push到栈上，而kerneltrap只需要判断是硬件中断还是异常(不会再有syscall)</p>
+<p>有些操作系统使用page fault来实现copy on write，即在fork时将父子的内存页表项都设为只读，子进程使用父进程的页表，当任意一个出现写请求时再进行完整的内存拷贝。再比如也可以用page fault实现lazy allocation，即发生缺页异常时再实际分配。</p>
+</blockquote>
+<h4 id="RISC-V-assembly"><a href="#RISC-V-assembly" class="headerlink" title="RISC-V assembly"></a>RISC-V assembly</h4><p>本题要求理解call.c编译出的汇编代码回答问题</p>
+<p>Q: Which registers contain arguments to functions? For example, which register holds 13 in main’s call to <code>printf</code>?</p>
+<p>A: a0, a1 and a2 contain arguments to functions. In main’s call to printf, a1 holds 13.</p>
+<p>Q: Where is the call to function <code>f</code> in the assembly code for main? Where is the call to <code>g</code>? (Hint: the compiler may inline functions.)</p>
+<p>A: The compiler computes the return value in advance and take the value as the argument to printf. So the call action is omitted.</p>
+<p>Q: At what address is the function <code>printf</code> located?</p>
+<p>A: 0x642 in the comment.</p>
+<p>Q: What value is in the register <code>ra</code> just after the <code>jalr</code> to <code>printf</code> in <code>main</code>?</p>
+<p>A: 0x38. jalr will store the address of the consequent instruction in the target register ra.</p>
+<p>Q: Run the following code. </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">unsigned</span> <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0x00646c72</span><span class="token punctuation">;</span>
+<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"H%x Wo%s"</span><span class="token punctuation">,</span> <span class="token number">57616</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>What is the output? The output depends on that fact that the RISC-V is little-endian. If the RISC-V were instead big-endian what would you set <code>i</code> to in order to yield the same output? Would you need to change <code>57616</code> to a different value?</p>
+<p>A: The output is “He110 world”. if RISC-V is big-endian, variable i would be 0x726c6400 but 57616 need not be changed.</p>
+<p>Q: In the following code, what is going to be printed after <code>&#39;y=&#39;</code>? (note: the answer is not a specific value.) Why does this happen?</p>
+<pre class="language-none"><code class="language-none">printf(&quot;x&#x3D;%d y&#x3D;%d&quot;, 3);</code></pre>
+
+<p>A: I think it depends on the architecture and the compiler. y may be a random value from the register or from the stack.</p>
+<h4 id="Backtrace"><a href="#Backtrace" class="headerlink" title="Backtrace"></a>Backtrace</h4><p>本题要求写一个函数打印调用栈中的所有返回地址。根据<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.1810/2022/lec/l-riscv.txt">lecture notes</a>给出的栈帧可以看出，栈自高地址向低地址增长，sp寄存器指向当前栈顶，fp寄存器指向当前栈底(上一个栈顶)，在fp-8处是返回地址，fp-16处是上一个fp。因此可以通过提供的内联汇编码获取fp，并以迭代的方式读取所有的返回地址。</p>
+<p>文档提示内核栈只占一个page，可以通过PGROUNDDOWN查看当前地址在哪一页。所以循环的终止条件可以是<code>PGROUNNDDOWN(fp)==PGROUNDDOWN(pre_fp)</code>。我写的时候是用的<code>fp &lt; PGROUNDUP(fp)</code>，因为最后一个fp肯定等于更高地址页的起始地址。</p>
+<h4 id="Alarm"><a href="#Alarm" class="headerlink" title="Alarm"></a>Alarm</h4><p>本题要求新增系统调用<code>sigalarm</code>和<code>sigreturn</code>。</p>
+<p><code>sigalarm</code>要求进程每隔固定时间执行某函数，根据提示在proc结构体中加入interval、handler、tickcount三个成员，执行该系统调用时将interval和handler存入进程结构体中，并将count归零。然后每次硬件中断时监测是否为时钟中断，并在count上+1以及判断是否到达interval。由于handler是用户态的函数，因此需要返回用户态以后执行该函数。trap时返回用户态程序靠的是epc，所以只需要将trapframe中的epc改为handler即可返回到这个函数中(不带参数)。</p>
+<p>但是这样会破坏原来的epc以及trapframe等，为了进一步完善alarm，人为规定在handler的最后必须调用sigreturn系统调用完成收尾工作以及恢复alarm前的样子。</p>
+<style>.cyfkjgmiprie{zoom:33%;}</style><img src="/Blog/2023/05/03/mit6-828%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%A4%BA%E6%84%8F%E5%9B%BE.png" class="cyfkjgmiprie" alt="示意图">
+
+<p>通过在proc结构体中加入alarmtrapframe用于备份时钟中断时的trapframe，以及使用inalarm在表征此时正处于在handler中以关闭alarm。sigreturn时将alarmtrapframe的内容恢复到trapframe，并且由于syscall返回用户空间时返回值通过trapframe-&gt;a0传递，因此只能return trapframe-&gt;a0才不会破坏原值。</p>
+<style>.dnoojvtoghiz{zoom:50%;}</style>
+
+<h3 id="Lab-Copy-on-Write-Fork-for-xv6"><a href="#Lab-Copy-on-Write-Fork-for-xv6" class="headerlink" title="Lab: Copy-on-Write Fork for xv6"></a>Lab: Copy-on-Write Fork for xv6</h3><p>本次lab要求实现copy on write，实现的思路是将uvmcopy的简单拷贝过程给改成使用相同的PTE条目填充子进程的页表。将父子进程的PTE_W都设为0后，其中一方由于写内存而触发page fault后，交由kernel的trap handler处理，分配新的物理页并将原物理页的内容拷贝下来。</p>
+<p>由于这种情况下同一时间可能有两个pte指向同一块物理内存，带来的难点就是引用计数的设计，即何时增加引用计数，何时减少引用计数。一开始我觉得应该在mappages中增加引用计数，但是实际上设计cow机制的map只有在uvmcopy中出现，加到mappages中可能会引发其他问题，因此只需要在uvmcopy中增加计数即可。调用kalloc分配的页的引用计数以1为初始值。何时减少引用计数呢？我本来认为应该在unmap处，或者在kfree之前减少引用计数，因为我觉得kernel代码中有其他一些kfree的调用会因为之前没有给他增加引用计数而出错。实际上这些不需要担心，因为initpage是最先进行的。另外copyout也需要增加代码用于对COW的页进行重分配，逻辑与trap大致相同。</p>
+<p>在freerange中也需要额外增加一次引用计数，因为在init之前没有东西引用过它们。</p>
+<p>关于PTE，新增了一位PTE_C位表明这页是COW的。实际上只需要为原来有PTE_W的页设立这一项，原来就是只能PTE_R的在重复映射下一样不会影响。</p>
+<p>代码参考了<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/594047776">MIT 6.S018 lab cow(Copy-on-write fork) 踩坑指南 - 知乎 (zhihu.com)</a>的部分内容，感谢。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/Xv6/" rel="tag"># Xv6</a>
+              <a href="/Blog/tags/OS/" rel="tag"># OS</a>
+              <a href="/Blog/tags/Mit/" rel="tag"># Mit</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2023/03/13/%E5%8A%A0%E6%81%AF%E3%80%81%E9%99%8D%E6%81%AF%E4%B8%8E%E7%A1%85%E8%B0%B7%E9%93%B6%E8%A1%8C%E7%A0%B4%E4%BA%A7/" rel="prev" title="加息、降息与硅谷银行破产">
+                  <i class="fa fa-chevron-left"></i> 加息、降息与硅谷银行破产
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2023/07/31/%E8%A1%8C%E4%B8%9A%E3%80%81%E5%85%AC%E5%8F%B8%E3%80%81%E5%B7%A5%E4%BD%9C/" rel="next" title="行业、公司、工作">
+                  行业、公司、工作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

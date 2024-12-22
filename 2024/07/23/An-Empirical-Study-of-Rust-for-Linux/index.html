@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="本文主要对Rust-For-Linux下的代码进行了实证研究，总结了使用Rust开发Linux内核的成果和不足，相关数据集开源在Richardhongyu&#x2F;rfl_empirical_tools. 3个RQ：  RFL的现状是什么 代码审查流程限制了其进一步的发展(driver、file system) 在内存安全上Rust并不是万能的   RFL是否名副其实 RFL的目标是更安全、 开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="An Empirical Study of Rust-for-Linux">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2024/07/23/An-Empirical-Study-of-Rust-for-Linux/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="本文主要对Rust-For-Linux下的代码进行了实证研究，总结了使用Rust开发Linux内核的成果和不足，相关数据集开源在Richardhongyu&#x2F;rfl_empirical_tools. 3个RQ：  RFL的现状是什么 代码审查流程限制了其进一步的发展(driver、file system) 在内存安全上Rust并不是万能的   RFL是否名副其实 RFL的目标是更安全、 开">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-07-23T00:29:11.000Z">
+<meta property="article:modified_time" content="2024-12-22T04:52:01.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2024/07/23/An-Empirical-Study-of-Rust-for-Linux/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2024/07/23/An-Empirical-Study-of-Rust-for-Linux/","path":"2024/07/23/An-Empirical-Study-of-Rust-for-Linux/","title":"An Empirical Study of Rust-for-Linux"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>An Empirical Study of Rust-for-Linux | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Preliminary"><span class="nav-number">1.</span> <span class="nav-text">Preliminary</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RFL%E7%8E%B0%E7%8A%B6"><span class="nav-number">2.</span> <span class="nav-text">RFL现状</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RFL%E6%98%AF%E5%90%A6%E5%90%8D%E5%89%AF%E5%85%B6%E5%AE%9E"><span class="nav-number"></span> <span class="nav-text">RFL是否名副其实</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2024/07/23/An-Empirical-Study-of-Rust-for-Linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="An Empirical Study of Rust-for-Linux | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          An Empirical Study of Rust-for-Linux
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-07-23 08:29:11" itemprop="dateCreated datePublished" datetime="2024-07-23T08:29:11+08:00">2024-07-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-12-22 12:52:01" itemprop="dateModified" datetime="2024-12-22T12:52:01+08:00">2024-12-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">论文阅读</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文主要对<a target="_blank" rel="noopener" href="https://github.com/Rust-for-Linux">Rust-For-Linux</a>下的代码进行了实证研究，总结了使用Rust开发Linux内核的成果和不足，相关数据集开源在<a target="_blank" rel="noopener" href="https://github.com/Richardhongyu/rfl_empirical_tools">Richardhongyu&#x2F;rfl_empirical_tools</a>.</p>
+<p>3个RQ：</p>
+<ul>
+<li>RFL的现状是什么<ul>
+<li>代码审查流程限制了其进一步的发展(driver、file system)</li>
+<li>在内存安全上Rust并不是万能的</li>
+</ul>
+</li>
+<li>RFL是否名副其实<ul>
+<li>RFL的目标是更安全、 开销更小、更容易开发</li>
+<li>实际上由于 unsafe的使用，只能做到more securable；一些情况下性能更低(icache miss)；引入了更多的新人加入内核开发</li>
+</ul>
+</li>
+<li>从RFL中能学到什么</li>
+</ul>
+<h4 id="Preliminary"><a href="#Preliminary" class="headerlink" title="Preliminary"></a>Preliminary</h4><ul>
+<li>FFI：Foreign Function Interface，用一种编程语言写的程序能调用另一种编程语言写的函数。RFL主要是使用Rust提供API给C Linux kernel调用</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rust-lang/rust-bindgen">rust-lang&#x2F;rust-bindgen</a>：自动将C头文件定义中的struct、函数声明转为Rust版本</li>
+</ul>
+<h4 id="RFL现状"><a href="#RFL现状" class="headerlink" title="RFL现状"></a>RFL现状</h4><p>6个insights：</p>
+<ul>
+<li><strong>drivers, netdev, and file systems</strong> are the long tail of RFL code.<ul>
+<li>大多数都是内存管理，设备中断请求等</li>
+</ul>
+</li>
+<li>RFL <strong>infrastructure</strong> has <strong>matured</strong>, with safe abstraction and drivers being the next focus.<ul>
+<li>Kbuild在patch中占的比重降低，而safe abstraction的比重升高</li>
+</ul>
+</li>
+<li>RFL is bottlenecked by <strong>code review</strong> but not by code development.<ul>
+<li>原因：缺少高质量reviewer；RFL和Linux社区的合作模式不同(回复时间，审核周期等)；死锁：linux的人不喜欢审核没有实际driver的safe abstraction，而没有safe abstraction，RFL的人无法开发driver</li>
+</ul>
+</li>
+<li>Kernel’s initiative to control memory in fine granularity <strong>conflicts</strong> Rust <strong>philosophy</strong>, which incurs overhead for RFL.<ul>
+<li>Rust不支持C中的bitfield和union等数据结构，只能用一些低效的实现方式</li>
+<li>Rust也不支持C中一些变量的attributes关键字</li>
+</ul>
+</li>
+<li>RFL uses helper types to delegate management of kernel data to Rust while leaving the operation to kernel itself.<ul>
+<li>Type和Deref来规范化类型和指针，从而避免C中void *之类的模糊</li>
+<li>使用一些类型来帮助管控内核中一些结构体的行为(退出作用域自动释放内存、自动引用计数等)</li>
+</ul>
+</li>
+<li>The major difficulty of writing safe drivers in Rust is to reconcile the inflexibility of Rust versus kernel programming conventions, which is often an oversight by RFL and the Linux community from what we observe.<ul>
+<li>Rust中用于device probing的类型可能会很复杂</li>
+<li>Rust中想要做到变长array比较麻烦，而C只需要一个指针和一个长度就可以了</li>
+</ul>
+</li>
+</ul>
+<h3 id="RFL是否名副其实"><a href="#RFL是否名副其实" class="headerlink" title="RFL是否名副其实"></a>RFL是否名副其实</h3><style>.qhqqucqltkvx{zoom:50%;}</style>
+
+<ul>
+<li>with RFL, Linux becomes more “securable” but still cannot be fully secure.<ul>
+<li>Rust基本的内存安全控制</li>
+<li>unsafe是无法移除的</li>
+<li>Bug依旧可能由并发或者上下文语意语义产生</li>
+</ul>
+</li>
+<li>There is no free lunch for performance –it is the programmer that counts!<ul>
+<li>binary普遍增大</li>
+<li>一些情况下会效率更高，另一些情况下则不然</li>
+</ul>
+</li>
+<li>Rust的引入为内核开发带来了很多便利<ul>
+<li>代码质量、可读性(doc注释)</li>
+<li>新人加入(但暂时还不能承担核心任务)</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2024/04/18/%E5%85%B3%E8%A5%BF%E6%B8%B8%E8%AE%B0/" rel="prev" title="关西游记">
+                  <i class="fa fa-chevron-left"></i> 关西游记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2024/09/07/%E4%B8%AD%E5%9B%BDRust%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A%E5%8F%82%E4%BC%9A%E8%AE%B0%E5%BD%95/" rel="next" title="中国Rust开发者大会参会记录">
+                  中国Rust开发者大会参会记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: no-wrap;
+    justify-content: center;
+    padding: 10px;
+}
+.card{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-style:ridge;
+    box-shadow: 0 4px 8px 0 #aaa;
+    padding: 2px;
+}
+.pic-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: no-wrap;
+    justify-content: center;
+    width: 120px;
+    height: 100%;
+    flex-shrink: 0;
+}
+.pic{
+    max-width: 100px;
+    max-height: 150px;
+    margin: 0px !important;
+}
+.content-container{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+}
+.book-name{
+    word-wrap: break-word;
+    color: #5073b8;
+}
+.author-name{
+    word-wrap: break-word;
+    font-size: 12px;
+}
+.read-time{
+    word-wrap: break-word;
+    font-size: 12px;
+}
+.short-comment{
+    word-wrap: break-word;
+    font-size: 12px;
+}

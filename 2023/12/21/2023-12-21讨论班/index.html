@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="Hostping：Diagnosing Intra-host Network Bottlenecks in RDMA ServersNSDI23 论文原文 slides CPU和CPU之间通过特定协议(Intel-UPI&#x2F;AMD)在通道间通信 memory channel: 指CPU暴露给内存的接口的通道数(非内存内通道数)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023-12-21讨论班">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="Hostping：Diagnosing Intra-host Network Bottlenecks in RDMA ServersNSDI23 论文原文 slides CPU和CPU之间通过特定协议(Intel-UPI&#x2F;AMD)在通道间通信 memory channel: 指CPU暴露给内存的接口的通道数(非内存内通道数)">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E6%9C%89%E6%8D%9F%E6%A8%A1%E5%BC%8F.jpg">
+<meta property="og:image" content="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84.jpg">
+<meta property="article:published_time" content="2023-12-21T10:53:07.000Z">
+<meta property="article:modified_time" content="2023-12-28T12:09:18.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="NSDI">
+<meta property="article:tag" content="RDMA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E6%9C%89%E6%8D%9F%E6%A8%A1%E5%BC%8F.jpg">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/","path":"2023/12/21/2023-12-21讨论班/","title":"2023-12-21讨论班"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2023-12-21讨论班 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hostping%EF%BC%9ADiagnosing-Intra-host-Network-Bottlenecks-in-RDMA-Servers"><span class="nav-number">1.</span> <span class="nav-text">Hostping：Diagnosing Intra-host Network Bottlenecks in RDMA Servers</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2023-12-21讨论班 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2023-12-21讨论班
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-12-21 18:53:07" itemprop="dateCreated datePublished" datetime="2023-12-21T18:53:07+08:00">2023-12-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-12-28 20:09:18" itemprop="dateModified" datetime="2023-12-28T20:09:18+08:00">2023-12-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E7%BB%84%E4%BC%9A%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">组会记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Hostping：Diagnosing-Intra-host-Network-Bottlenecks-in-RDMA-Servers"><a href="#Hostping：Diagnosing-Intra-host-Network-Bottlenecks-in-RDMA-Servers" class="headerlink" title="Hostping：Diagnosing Intra-host Network Bottlenecks in RDMA Servers"></a>Hostping：Diagnosing Intra-host Network Bottlenecks in RDMA Servers</h3><p>NSDI23 <a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/nsdi23-liu-kefei.pdf">论文原文</a> <a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/nsdi23_slides_liu-kefei.pdf">slides</a></p>
+<p>CPU和CPU之间通过特定协议(Intel-UPI&#x2F;AMD)在通道间通信</p>
+<p>memory channel: 指CPU暴露给内存的接口的通道数(非内存内通道数)</p>
+<p>网卡和CPU通信通过PCIe链路进行，由于CPU的PCIe接口数有限，因此通过PCIe Switch之类的设备帮助多个外设复用同一个PCIe接口(可能还会再连一个PCIe Hub更低一级)</p>
+<p>主机内部网络的瓶颈：无损模式下由于线路老化可能突然RNIC的线路degrade了，此时由于buffer被快速挤满，因此RNIC网卡会回返Tx PFC告诉下面上面已经满了。——可能带来PFC storm或者PFC deadlock</p>
+<p>如果不是无损模式则可能有包的drop</p>
+<img src="/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E6%9C%89%E6%8D%9F%E6%A8%A1%E5%BC%8F.jpg" class="">
+
+
+
+<p>GDR：GPU Direct RDMA，GPU直接访问其他机器上GPU的显存</p>
+<p>本文讨论的机器内部结构，这里Socket可以理解为CPU</p>
+<img src="/Blog/2023/12/21/2023-12-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84.jpg" class="" title="拓扑结构">
+
+<p>硬件设备和设备不能直接通过Switch互联，还是得先去CPU走Access Control Service</p>
+<p>本篇motivation：RNIC的带宽增长太快，PCIe4.0带宽速率支持不上了，同时PICe拓展的各个独特设备的复杂拓扑也导致可能的故障问题</p>
+<p>因此设计这个Hostping用来帮助辨认这些问题，比如不知道是主机的问题还是网络的问题等等</p>
+<ul>
+<li>主机空闲(负载&lt;5%)，测试硬件的延迟和带宽</li>
+<li>主机繁忙时，如果RNIC寄存器有异常，那么测量网络</li>
+</ul>
+<p>测出每个RNIC到硬件的metrics(带宽)后，得出一个metrics矩阵，然后本文中的问题都可以从这个矩阵中看出pattern</p>
+<p>对比baseline标记出正常链路，从而推断拓扑下的异常链路【正常的链路中每段都是正常的，剩余的难以分辨的可以标记为异常】</p>
+<p>但是有时异常是由于链路问题，有时可能是因为错误配置【Root Complex控制器】导致，这里通过时延来区分二者</p>
+<p>如果很多RNIC到memory有问题，那么可能是memory channel有问题</p>
+<p>Disscussion: 可能还是idea比较好，说服力、开销、metric的选取等还有待商榷</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/NSDI/" rel="tag"># NSDI</a>
+              <a href="/Blog/tags/RDMA/" rel="tag"># RDMA</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2023/12/14/2023-12-14%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="prev" title="2023-12-14讨论班">
+                  <i class="fa fa-chevron-left"></i> 2023-12-14讨论班
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2023/12/28/2023-12-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="next" title="2023-12-28讨论班">
+                  2023-12-28讨论班 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

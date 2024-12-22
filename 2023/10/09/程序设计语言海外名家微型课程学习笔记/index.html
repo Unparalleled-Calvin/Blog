@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="课程 主讲人    Introduction to Functional Programming Jeremy Gibbons   Introduction to Property Based Testing John Hughes   大纲：程序设计语言海外名家微型课程-北京大学程序设计语言研究室 (pku.edu.cn) 材料：jegi&#x2F;Beijing-exercises: E">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序设计语言海外名家微型课程学习笔记">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2023/10/09/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80%E6%B5%B7%E5%A4%96%E5%90%8D%E5%AE%B6%E5%BE%AE%E5%9E%8B%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="课程 主讲人    Introduction to Functional Programming Jeremy Gibbons   Introduction to Property Based Testing John Hughes   大纲：程序设计语言海外名家微型课程-北京大学程序设计语言研究室 (pku.edu.cn) 材料：jegi&#x2F;Beijing-exercises: E">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-10-09T06:20:07.000Z">
+<meta property="article:modified_time" content="2023-10-18T06:05:49.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="Programming Language">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2023/10/09/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80%E6%B5%B7%E5%A4%96%E5%90%8D%E5%AE%B6%E5%BE%AE%E5%9E%8B%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2023/10/09/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80%E6%B5%B7%E5%A4%96%E5%90%8D%E5%AE%B6%E5%BE%AE%E5%9E%8B%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/","path":"2023/10/09/程序设计语言海外名家微型课程学习笔记/","title":"程序设计语言海外名家微型课程学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>程序设计语言海外名家微型课程学习笔记 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%AE%B2"><span class="nav-number">1.</span> <span class="nav-text">第一讲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Functions-equations-recursion-reasoning-higher-order"><span class="nav-number">1.1.</span> <span class="nav-text">Functions, equations, recursion reasoning, higher-order.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Motivational-introduction-to-property-based-testing-with-stories-from-the-battlefield%E2%80%94using-Quviq-QuickCheck-for-Erlang"><span class="nav-number">1.2.</span> <span class="nav-text">Motivational introduction to property-based testing, with stories from the battlefield—using Quviq QuickCheck for Erlang</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%AE%B2"><span class="nav-number">2.</span> <span class="nav-text">第二讲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Algebraic-datatypes"><span class="nav-number">2.1.</span> <span class="nav-text">Algebraic datatypes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#How-to-specify-it"><span class="nav-number">2.2.</span> <span class="nav-text">How to specify it!</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E8%AE%B2"><span class="nav-number">3.</span> <span class="nav-text">第三讲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Types-polymorphism-type-classes"><span class="nav-number">3.1.</span> <span class="nav-text">Types, polymorphism, type classes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Generators"><span class="nav-number">3.2.</span> <span class="nav-text">Generators</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E8%AE%B2"><span class="nav-number">4.</span> <span class="nav-text">第四讲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Monads-and-Applicative-Functors"><span class="nav-number">4.1.</span> <span class="nav-text">Monads and Applicative Functors</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#State-machine-models-in-Haskell"><span class="nav-number">4.2.</span> <span class="nav-text">State machine models in Haskell</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E8%AE%B2"><span class="nav-number">5.</span> <span class="nav-text">第五讲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Laziness-and-Infinite-Data-Structures"><span class="nav-number">5.1.</span> <span class="nav-text">Laziness and Infinite Data Structures</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#QuickSpec%E2%80%94%E2%80%94Formal-Specifications-for-Free"><span class="nav-number">5.2.</span> <span class="nav-text">QuickSpec——Formal Specifications for Free</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2023/10/09/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80%E6%B5%B7%E5%A4%96%E5%90%8D%E5%AE%B6%E5%BE%AE%E5%9E%8B%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="程序设计语言海外名家微型课程学习笔记 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          程序设计语言海外名家微型课程学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-10-09 14:20:07" itemprop="dateCreated datePublished" datetime="2023-10-09T14:20:07+08:00">2023-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-10-18 14:05:49" itemprop="dateModified" datetime="2023-10-18T14:05:49+08:00">2023-10-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E6%8A%80%E6%9C%AF%E8%A7%86%E9%87%8E/" itemprop="url" rel="index"><span itemprop="name">技术视野</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <table>
+<thead>
+<tr>
+<th>课程</th>
+<th>主讲人</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Introduction to Functional Programming</td>
+<td>Jeremy Gibbons</td>
+</tr>
+<tr>
+<td>Introduction to Property Based Testing</td>
+<td>John Hughes</td>
+</tr>
+</tbody></table>
+<p>大纲：<a target="_blank" rel="noopener" href="https://pl.cs.pku.edu.cn/info/1017/1839.htm">程序设计语言海外名家微型课程-北京大学程序设计语言研究室 (pku.edu.cn)</a></p>
+<p>材料：<a target="_blank" rel="noopener" href="https://github.com/jegi/Beijing-exercises">jegi&#x2F;Beijing-exercises: Exercises and other materials for the course on FP and QuickCheck at Peking University in October 2023 (github.com)</a></p>
+<p>授课地点：北京大学</p>
+<h3 id="第一讲"><a href="#第一讲" class="headerlink" title="第一讲"></a>第一讲</h3><h4 id="Functions-equations-recursion-reasoning-higher-order"><a href="#Functions-equations-recursion-reasoning-higher-order" class="headerlink" title="Functions, equations, recursion reasoning, higher-order."></a>Functions, equations, recursion reasoning, higher-order.</h4><p>传统的有语句statement和表达式expression，函数时可以理解为只涉及表达式，只操作value，这种视角可能回更加精简。</p>
+<p>no side effects是expression的一个重要性质</p>
+<ul>
+<li>赋值操作(action)会破坏这样的性质</li>
+</ul>
+<p>Fortran将statement转化为一系列简单的机器操作，这在当时是一种创新，队expression的拓展</p>
+<p>applicative order evaluation：先计算参数，再展开函数并带入【对于infinity之类的递归定义值不太好处理】</p>
+<p>normal order evaluation：先展开函数定义，再考虑带入参数【call by need， lazy evaluation，Haskell用这个】</p>
+<p>Haskell的函数类型定义类似$f::A\rightarrow B$，$f$是函数名，$A$和$B$是参数类型，调用函数的时候$f\ x$即可，例如<br>$$<br>square::Integer\rightarrow Integer\<br>square\ (3+4)<br>$$<br>用lambda表达式写square就是$\lambda x\rightarrow x\times x$</p>
+<p>Haskell支持多种编程风格，declaration style和expression style</p>
+<p>函数相等的含义是说对于任何输入的参数，函数都能输出相同的内容【当然计算机不能知道】</p>
+<p>Currying：把结构化的参数替换为多个更简单的结构，函数的柯里化。例如把一个接受两个参数的函数转化为一个接受两个连续参数的函数。</p>
+<p>所谓的接受两个连续参数，定义可以写成$f::Integer\rightarrow Integer\rightarrow Integer$，它等价于$f::Integer\rightarrow (Integer\rightarrow Integer)$【右结合性】，也就是先接受一个参数，返回一个函数，再由这个函数接受连续的第二个参数。实际调用的时候可以写成$fa\ b$</p>
+<p>associative：可以随便加括号，例如+*等。而FP中函数类型定义的操作符$\rightarrow$是<strong>右结合</strong>的，函数调用则是<strong>左结合</strong>的，所以特别的顺序需要额外加括号</p>
+<p>composition：函数复合，$f\circ g&#x3D;\lambda x\rightarrow f(g\ x)$，即先调用$g$再调用$f$,显然它是associative的</p>
+<p>definitions：例如<br>$$<br>here::String\<br>here&#x3D;\text”Oxford\text”\<br>smaller::(Integer, Integer)\rightarrow Integer\<br>smaller\ (x,y)&#x3D;\bold{if}\ x\le y\ \bold{then}\ x\ \bold{else}\ y<br>$$<br>“&#x3D;”意味着pattern match，即等号左边的pattern可以替换为右边的内容。所以你可以定义特殊情况的替换规则。等号右侧的表达式中可以引入新变量，并在最后用where语句写local definition<br>$$<br>foo::Float\rightarrow Float\<br>foo\ x &#x3D; x + a\ \bold{where}\ a&#x3D;sqrt\ x<br>$$<br>也可以使用$\bold{let}\ definition\ \bold{in}\ expression$的形式</p>
+<p>一些有趣的定义：<br>$$<br>curry::((a,b)\rightarrow c)\rightarrow(a\rightarrow b\rightarrow c)\<br>curry\ f&#x3D;\lambda a\ b\rightarrow f(a,b)<br>$$<br>根据定义，curry接受一个$((a,b)\rightarrow c)$函数，返回一个$(a\rightarrow b\rightarrow c)$的函数。对应到下面，$f$就是这个参数，而等号右边的$\lambda\cdots$就是返回的函数。这个返回的函数接受两个参数，返回参数$f$调用这两个函数的结果。<br>$$<br>iter::Int\rightarrow (Integer\rightarrow Integer)\rightarrow(Integer\rightarrow Integer)\<br>iter\ 0\ f&#x3D;id\<br>iter\ n\ f&#x3D;f\circ iter(n-1)\ f<br>$$</p>
+<h4 id="Motivational-introduction-to-property-based-testing-with-stories-from-the-battlefield—using-Quviq-QuickCheck-for-Erlang"><a href="#Motivational-introduction-to-property-based-testing-with-stories-from-the-battlefield—using-Quviq-QuickCheck-for-Erlang" class="headerlink" title="Motivational introduction to property-based testing, with stories from the battlefield—using Quviq QuickCheck for Erlang"></a>Motivational introduction to property-based testing, with stories from the battlefield—using Quviq QuickCheck for Erlang</h4><p>generate tests but write them</p>
+<p>Example：a Circular Buffer，一个用C实现的循环buffer，通过取模运算实现</p>
+<p>property：size大小应该正确</p>
+<p>计算size的时候需要%size，但是如果实占空间(input pointer - output pointer)&#x3D;&#x3D;size，那么结果是0&#x3D;&gt;不正确。</p>
+<ul>
+<li>解决方法：偷偷将size在分配时搞成n+1，这样实占n的时候n%(n+1)也能得到正确结果</li>
+</ul>
+<p>如果input pointer在output pointer之前，%会产生负数结果。</p>
+<ul>
+<li>解决方法：(input pointer - output pointer + size) % size</li>
+</ul>
+<p>有状态机器模型</p>
+<p>每个API call有pre condition&#x2F;stste transition&#x2F;post condition，call完以后的post condition应该与对应model一致</p>
+<ul>
+<li>同一个property可以测出不同的bug</li>
+<li>精简失败的测试样例可以使我们debug变得更简单</li>
+</ul>
+<p>CANbug的例子：底层由于ID的bit长度不够用而拓展长度，让最左边的bit作为标志版本位，结果软件工程师在比较priority时却从左边开始比。</p>
+<p>state model machine该如何应对并发情况呢？可能结果太多了</p>
+<blockquote>
+<p>他的解释是以可能的sequence作为model，因为大多数的操作是原子的，可以这样干</p>
+</blockquote>
+<p>Q: dif between fuzzing and pbt?</p>
+<p>A: 也有一些用coverage based 方法来做pbt的</p>
+<h3 id="第二讲"><a href="#第二讲" class="headerlink" title="第二讲"></a>第二讲</h3><h4 id="Algebraic-datatypes"><a href="#Algebraic-datatypes" class="headerlink" title="Algebraic datatypes"></a>Algebraic datatypes</h4><p>list：</p>
+<pre class="language-haskell" data-language="haskell"><code class="language-haskell"><span class="token import-statement"><span class="token keyword">import</span> Data<span class="token punctuation">.</span>List</span></code></pre>
+
+<p>$[1,2,3],[]$，用$ele:list$表示ele后面接续的list。$[1,2,3]&#x3D;1:2:3:[]$</p>
+<p>同一函数的多个pattern matching可以用case of语句结合起来</p>
+<p>list操作符：$++::[Integer]\rightarrow[Integer]\rightarrow[Integer]$两个拼接，$concat::[[Integer]]\rightarrow[Integer]$，$reverse$</p>
+<p>map：对每个ele执行操作<br>$$<br>map::(Intger\rightarrow Integer)\rightarrow [Integer]\rightarrow[Integer]\<br>map\ f(x:xs)&#x3D;f\ x:map\ f\ xs<br>$$<br>filter：<br>$$<br>\begin{align}<br>filter\ p(x:xs)\<br>&amp;|p\ x&amp;&#x3D;x:filter\ p\ xs\<br>&amp;|otherwise&amp;&#x3D;filter\ p\ xs<br>\end{align}<br>$$<br>list-generating expression: $[e|Qs]$，e是表达式，Qs是用”,”分割一系列qualifier，例如$x\leftarrow xs$这样的generator，或者其他条件</p>
+<blockquote>
+<p>x:xs这样的格式让haskell的列表更加适用于类似于动规那样可以分解为子问题的算法</p>
+</blockquote>
+<p>Fold right：类似sum x:xs&#x3D;x+sum xs这种，展开后从右向左合并</p>
+<p>Fold left：foldl op e (x:xs) &#x3D; foldl op (e ‘op’ x) xs展开后(((e op x)op y) op x ……从左向右合并。即先提供一个初始值e，然后不停用op操作已有值与第一个值</p>
+<p>【？？漏了】</p>
+<p>algebraic datatypes：用代数形式表示的数据类型，例如一个接受A类型和B类型的函数C接受参数后可以视为一份Data，再例如一些类型的复合等等</p>
+<h4 id="How-to-specify-it"><a href="#How-to-specify-it" class="headerlink" title="How to specify it!"></a>How to specify it!</h4><p>propert check函数可以使用&#x3D;&#x3D;&#x3D;才判断相等的同时展示相关信息</p>
+<pre class="language-haskell" data-language="haskell"><code class="language-haskell"><span class="token import-statement"><span class="token keyword">import</span> Test<span class="token punctuation">.</span>QuickCheck</span>
+
+<span class="token hvariable">prop_Reverse</span> <span class="token operator">::</span> <span class="token punctuation">[</span><span class="token constant">Integer</span><span class="token punctuation">]</span> <span class="token operator">-></span> <span class="token punctuation">[</span><span class="token constant">Integer</span><span class="token punctuation">]</span> <span class="token operator">-></span> <span class="token punctuation">[</span><span class="token constant">Integer</span><span class="token punctuation">]</span> <span class="token comment">--明确的类型告诉QuickCheck怎么生成test</span>
+<span class="token hvariable">prop_Reverse</span> <span class="token hvariable">xs</span> <span class="token hvariable">ys</span> <span class="token operator">=</span> <span class="token builtin">reverse</span> <span class="token punctuation">(</span><span class="token hvariable">xs</span> <span class="token operator">++</span> <span class="token hvariable">ys</span><span class="token punctuation">)</span> <span class="token operator">===</span> <span class="token builtin">reverse</span> <span class="token hvariable">ys</span> <span class="token operator">++</span> <span class="token builtin">reverse</span> <span class="token hvariable">xs</span></code></pre>
+
+<p>ghci中quckCheck prop_Reverse</p>
+<p>但是如果我们本身就不知道返回值的正确结果，如何写测试代码呢？</p>
+<ul>
+<li>可以用返回值的property继续处理 ppt p6</li>
+<li>但是可能不够精确，导致测不出bug！ppt p7</li>
+</ul>
+<p>5 systematic ways of formulating properties</p>
+<p>荐书：《How to Solve It》</p>
+<p>RQs：</p>
+<ul>
+<li>invariant，不变的性质等等。可以将不变性套用到要测的相关操作上</li>
+<li>postcondition，发生操作之后，condition可以用操作的参数以及原数据等表示。通过construct这些操作来确保相关性质一定成立(不涉及可能有问题的逻辑)</li>
+<li>metamorphic tests，对测试进行变质，不同测试顺序达到相同结果or性质</li>
+<li>inductive properties，可以归纳证明其他相关操作正确性的基础性质</li>
+<li>model based properties，对程序状态建模model(自动生成)，需要确保模型正确，程序状态变迁的同时model自己变迁，比对新程序状态是否能转为新model</li>
+</ul>
+<h3 id="第三讲"><a href="#第三讲" class="headerlink" title="第三讲"></a>第三讲</h3><h4 id="Types-polymorphism-type-classes"><a href="#Types-polymorphism-type-classes" class="headerlink" title="Types, polymorphism, type classes"></a>Types, polymorphism, type classes</h4><p>Algebraic Data Type(ADT)：复合数据类型，例如$\bold{data}\ Person&#x3D;P\ Name\ Age$。这里$P$就可以看作一个constructor(类似$Just$等)，Person作为参数的时候，可以用$(P\ …\ …)$代替。</p>
+<p>ADT也可以是递归的，例如$\bold{data}\ Expr&#x3D;Lit\ Integer|Add\ Expr\ Expr$</p>
+<p>Nat和List的定义也是递归数据结构，可以参考ppt</p>
+<p>Haskell是强类型语言，类型的检查在执行之前。所以即便False &amp;&amp; 1(短路)也是会报错的</p>
+<p>多态：例如$fst::(x,y) \rightarrow x$中的x,y可以指代任何类型</p>
+<p>如果函数$h::[a]\rightarrow[a]$不涉及其他元素，只会rearrange原本列表中的元素。这就带来了一个有趣的性质：$map\ f\circ h&#x3D;h\circ map\ f$【free theorem】</p>
+<p>type classes：为泛型加上约束，类型一定要在这一组类里，例如$(+)::(Num\ a)&#x3D;&gt;(a\rightarrow a\rightarrow a)$</p>
+<h4 id="Generators"><a href="#Generators" class="headerlink" title="Generators"></a>Generators</h4><p>QuickCheck的class Arbitrary a有两个属性(这里a是泛型)</p>
+<ul>
+<li><p>arbitrary：类型为Gen a，产生一个随机的a</p>
+</li>
+<li><p>shrink：根据生成的数据，产生shrinking的备选List::[a]。shringing时<strong>不停</strong>选用其中最靠前且能导致当前case仍然fail的元素替换x，如果没有，则将case设为shrunk case</p>
+</li>
+</ul>
+<p>Type modifier：使用type约束参数以增加generate的效率，为了方便类型检查和可读性，可以使用new type</p>
+<p>四个可用的Gen的Combinator：</p>
+<ul>
+<li>$choose\ (m,n)$</li>
+<li>$element\ xs$</li>
+<li>$onof\ [gen1,\cdots, genN]$</li>
+<li>$frequency\ [(w1, gen1),\cdots,genN]$</li>
+</ul>
+<p>test Arbitary&#x2F;Shrink？generator和shrink可能使用了buggy code，所以要先保证generator的正确</p>
+<p>sized generator，给generator加额外的参数，更加自定义化</p>
+<p>如果树和k分别用Int生成的话，效率可能会很低，</p>
+<p>generate Key in the same way P40</p>
+<p>我们建立一个新的类型Key，从而Key的 Arbitrary生成遵循同一种方式，并且利用一些方法将范围尽可能的缩小，从而使效率尽可能地高</p>
+<p>更加精细化的label设置，使样例的统计更加合理</p>
+<p>如果对测试的占比有要求，可以使用cover算子 cover expected_percentage condition label</p>
+<h3 id="第四讲"><a href="#第四讲" class="headerlink" title="第四讲"></a>第四讲</h3><h4 id="Monads-and-Applicative-Functors"><a href="#Monads-and-Applicative-Functors" class="headerlink" title="Monads and Applicative Functors"></a>Monads and Applicative Functors</h4><p>side effect？？和主计算逻辑关联不大的的一些事</p>
+<p>Monad：模拟顺序执行的一种函数式hack，可以帮助实现IO等有副作用的执行</p>
+<p>传统的方式会将副作用逻辑与值逻辑混合起来，造成程序结构的混乱<br>$$<br>\bold{class}\ Monad\ m\ \bold{where}\<br>return::a\rightarrow m\ a\<br>(&gt;&gt;&#x3D;)::m\ a\rightarrow(a\rightarrow m\ b)\rightarrow m\ b<br>$$<br>这里m可以理解为某种computation</p>
+<p>bind：do this，用结果do that，然后得到一个结果</p>
+<p>由于bind中有各步执行的结果，所以可以模拟顺序执行语言。</p>
+<p>$\bold{do}$语法糖可以帮助自动生成bind等，在其中使用$\leftarrow$来表达<strong>类似</strong>赋值的语义(实际是赋予monad 内部的值)。</p>
+<p>IO Monad：输入输出&#x2F;文件……</p>
+<p>Applicative functors是弱一点的定义，Monad是Approach【licative的</p>
+<p>Traversal</p>
+<h4 id="State-machine-models-in-Haskell"><a href="#State-machine-models-in-Haskell" class="headerlink" title="State machine models in Haskell"></a>State machine models in Haskell</h4><p>程序的输入来自一个外部的复杂系统(OS&#x2F;DB……)，输出也输出到这个复杂系统。我们无法随时建模复杂系统，但是可以有初始状态</p>
+<p>model&#x2F;action</p>
+<p>needs：为了记录哪些step需要记录下来</p>
+<p>然后perform以[Ret stat]作为一个参数来解决之前的问题</p>
+<p>在test开始时清理系统保证test不会受之前的test影响</p>
+<p>negative test：需要测试出故意设置的错误的样例</p>
+<h3 id="第五讲"><a href="#第五讲" class="headerlink" title="第五讲"></a>第五讲</h3><h4 id="Laziness-and-Infinite-Data-Structures"><a href="#Laziness-and-Infinite-Data-Structures" class="headerlink" title="Laziness and Infinite Data Structures"></a>Laziness and Infinite Data Structures</h4><p>lazy evaluatiion：共享计算结果，而不是单纯的复制。即haskell先将函数展开，但是对于需要被计算出的值延迟到计算到这里的时候再算。从而可以在实现无限的数据结构的基础上，计算出优先结果(在有限步内)</p>
+<h4 id="QuickSpec——Formal-Specifications-for-Free"><a href="#QuickSpec——Formal-Specifications-for-Free" class="headerlink" title="QuickSpec——Formal Specifications for Free"></a>QuickSpec——Formal Specifications for Free</h4><p>QuickSpec如何检测程序性质？枚举所有可能的等式，然后测试是否成立</p>
+<p>对于可能有bug的程序，Quick Spec可以给出一种insight来揭示程序的性质。并且我们可以通过检查这些性质来查看程序设计是否符合我们的预期。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/Programming-Language/" rel="tag"># Programming Language</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2023/09/28/2023-9-28%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="prev" title="2023-9-28讨论班">
+                  <i class="fa fa-chevron-left"></i> 2023-9-28讨论班
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2023/10/11/Haskell%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" rel="next" title="Haskell开发环境配置">
+                  Haskell开发环境配置 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

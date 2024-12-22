@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="jp8hRIs_fXYSSevDoEZ1giHKjclja45PG5Hg07ivzIM">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"unparalleled-calvin.github.io","root":"/Blog/","images":"/Blog/images","scheme":"Pisces","darkmode":false,"version":"8.13.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/Blog/js/config.js"></script>
+
+    <meta name="description" content="API Fuzz Driver GenerationFuzz是个框架，Fuzz Driver是要测的序列，所以这里说的是对于API的Fuzz如何生成序列 Fuzzing的关键是构造Fuzz Dirver以及Input Generator 既然Fuzz需要接受输入执行代码，那如何应用到lib等API上？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023-9-14讨论班">
+<meta property="og:url" content="https://unparalleled-calvin.github.io/Blog/2023/09/14/2023-9-14%E8%AE%A8%E8%AE%BA%E7%8F%AD/index.html">
+<meta property="og:site_name" content="Calvin Cui">
+<meta property="og:description" content="API Fuzz Driver GenerationFuzz是个框架，Fuzz Driver是要测的序列，所以这里说的是对于API的Fuzz如何生成序列 Fuzzing的关键是构造Fuzz Dirver以及Input Generator 既然Fuzz需要接受输入执行代码，那如何应用到lib等API上？">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-14T11:14:04.000Z">
+<meta property="article:modified_time" content="2023-09-14T12:44:13.000Z">
+<meta property="article:author" content="Calvin Cui">
+<meta property="article:tag" content="Fuzz">
+<meta property="article:tag" content="ASE&#39;23">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://unparalleled-calvin.github.io/Blog/2023/09/14/2023-9-14%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://unparalleled-calvin.github.io/Blog/2023/09/14/2023-9-14%E8%AE%A8%E8%AE%BA%E7%8F%AD/","path":"2023/09/14/2023-9-14讨论班/","title":"2023-9-14讨论班"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2023-9-14讨论班 | Calvin Cui</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/Blog/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Calvin Cui</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/Blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">44</span></a></li><li class="menu-item menu-item-readings"><a href="/Blog/readings/" rel="section"><i class="fa fa-book fa-fw"></i>Readings</a></li><li class="menu-item menu-item-films"><a href="/Blog/films/" rel="section"><i class="fa fa-film fa-fw"></i>Films</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#API-Fuzz-Driver-Generation"><span class="nav-number">1.</span> <span class="nav-text">API Fuzz Driver Generation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generative-Type-Inference-for-Python%EF%BC%88ASE%E2%80%9923%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">Generative Type Inference for Python（ASE’23）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Calvin Cui"
+      src="/Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Calvin Cui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Unparalleled-Calvin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Unparalleled-Calvin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:CalvinCui@foxmail.com" title="E-mail → mailto:CalvinCui@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/438414714" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;438414714" rel="noopener" target="_blank"><i class="fa-brands fa-bilibili fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/Blog/WeChatOfficialAccount/" title="Platform → &#x2F;WeChatOfficialAccount&#x2F;"><i class="fa-brands fa-weixin fa-fw"></i>Platform</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://unparalleled-calvin.github.io/Blog/2023/09/14/2023-9-14%E8%AE%A8%E8%AE%BA%E7%8F%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Calvin Cui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2023-9-14讨论班 | Calvin Cui">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2023-9-14讨论班
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-09-14 19:14:04 / Modified: 20:44:13" itemprop="dateCreated datePublished" datetime="2023-09-14T19:14:04+08:00">2023-09-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/Blog/categories/%E7%BB%84%E4%BC%9A%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">组会记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="API-Fuzz-Driver-Generation"><a href="#API-Fuzz-Driver-Generation" class="headerlink" title="API Fuzz Driver Generation"></a>API Fuzz Driver Generation</h3><p>Fuzz是个框架，Fuzz Driver是要测的序列，所以这里说的是对于API的Fuzz如何生成序列</p>
+<p>Fuzzing的关键是构造Fuzz Dirver以及Input Generator</p>
+<p>既然Fuzz需要接受输入执行代码，那如何应用到lib等API上？</p>
+<ul>
+<li>API有依赖关系，Data、Control</li>
+<li>构建符合API语义的代码</li>
+</ul>
+<p>相关工作</p>
+<ul>
+<li><p>收集<strong>用户代码</strong>片段，通过call graph构建API依赖关系</p>
+<blockquote>
+<p>语义更好，收集高质量较难</p>
+</blockquote>
+<ul>
+<li><p>工作1：首先由一批CFG的执行图，清除无关的api调用得到精简图，将这些图中的公共顶点合并，跑一遍DFS去除环，得到合并后的CFG图和拓扑序</p>
+</li>
+<li><p>工作2：将用户程序抽象为自动机(程序状态点，函数调用、控制判断为边)，然后简化自动机，合并啥的</p>
+<blockquote>
+<p>用自动机的原因是他能标识判断的多分支</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>从<strong>API文档</strong>等构建依赖图，根据图游走构建序列</p>
+<blockquote>
+<p>覆盖更全，序列较短，语义不足</p>
+</blockquote>
+<ul>
+<li>工作1：期望覆盖更多API依赖图</li>
+<li>工作2：初始是单独的API node，通过mutation组装这些node</li>
+</ul>
+</li>
+</ul>
+<p>对于有复杂签名的API暂时没有好的处理方法，例如泛型函数，rust有Trait Bound，Java有基于Interface的约束，C++20有Concept约束。程序可能会生成原来库里没有的函数签名。</p>
+<p>Solution表示一种泛型参数的取值，Match是用具体的类型匹配泛型函数，而Mono则是函数的单态化</p>
+<p>使用其他API涉及的类型逐步推导更多的Match，然后生成所有可能的单态化函数，删除行为相同的单态化函数（行为用函数调用的方法集表示）。针对优化过的这些单态化函数进行覆盖等操作。</p>
+<h3 id="Generative-Type-Inference-for-Python（ASE’23）"><a href="#Generative-Type-Inference-for-Python（ASE’23）" class="headerlink" title="Generative Type Inference for Python（ASE’23）"></a>Generative Type Inference for Python（ASE’23）</h3><p>静态类型推断——coverage比较低</p>
+<p>有监督的类型推断：用训练的方式推断——需要大量的优质数据</p>
+<p>利用nlp的填空模型填入模型——可解释性欠缺</p>
+<p>TypeGen：利用大语言模型对话式地推断——可解释性变好了</p>
+<ul>
+<li>对象的上下文就是knowledge<ul>
+<li>代码裁剪：生成对象的类型依赖图-&gt;移除和当前要分析的变量无关的变量</li>
+</ul>
+</li>
+<li>合法类型<ul>
+<li>用户定义的类型+python类型+第三方包类型(他们对top10000的第三方库建了一个数据库可以直接拿出来)</li>
+</ul>
+</li>
+<li>用这些信息拼起来作为prompt喂给大模型</li>
+</ul>
+<p>My Comment：工作量就一两周，还是故事讲得好，有一定的参考意义</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Blog/tags/Fuzz/" rel="tag"># Fuzz</a>
+              <a href="/Blog/tags/ASE-23/" rel="tag"># ASE'23</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Blog/2023/09/07/2023-9-7%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="prev" title="2023-9-7讨论班">
+                  <i class="fa fa-chevron-left"></i> 2023-9-7讨论班
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Blog/2023/09/21/2023-9-21%E8%AE%A8%E8%AE%BA%E7%8F%AD/" rel="next" title="2023-9-21讨论班">
+                  2023-9-21讨论班 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calvin Cui</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/Blog/js/comments.js"></script><script src="/Blog/js/utils.js"></script><script src="/Blog/js/motion.js"></script><script src="/Blog/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.7/mermaid.min.js","integrity":"sha256-G58AID1YoX5YaEtWfXSI0VLrZ6N4kvNvwg0BI8zUFxE="}}</script>
+  <script src="/Blog/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/Blog/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
